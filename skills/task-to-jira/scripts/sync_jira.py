@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Any
 
 
-LABELS = ["投資接洽", "自動建立"]
+AUTO_LABEL = "自動建立"
 
 
 def load_env_file(path: Path) -> None:
@@ -39,6 +39,8 @@ def read_plan(path: Path) -> list[dict[str, Any]]:
     for item in payload:
         if not item.get("summary") or not item.get("description"):
             raise ValueError("every task needs summary and description")
+        if "labels" in item and not isinstance(item["labels"], list):
+            raise ValueError("task labels must be an array")
     return payload
 
 
@@ -78,24 +80,22 @@ class JiraClient:
             "POST",
             "/rest/api/3/search/jql",
             {
-                "jql": (
-                    f'project = "{project_key}" '
-                    'AND labels in ("投資接洽", "investment-contact")'
-                ),
+                "jql": f'project = "{project_key}" AND labels = "{AUTO_LABEL}"',
                 "maxResults": 100,
                 "fields": ["summary", "status", "labels"],
             },
         )
         return {issue["fields"]["summary"]: issue for issue in result.get("issues", [])}
 
-    def create(self, project_key: str, task: dict[str, Any]) -> dict[str, Any]:
+    def create(self, project_key: str, issue_type: str, task: dict[str, Any]) -> dict[str, Any]:
+        labels = list(dict.fromkeys([*task.get("labels", []), AUTO_LABEL]))
         return self.request(
             "POST",
             "/rest/api/3/issue",
             {
                 "fields": {
                     "project": {"key": project_key},
-                    "issuetype": {"name": "Task"},
+                    "issuetype": {"name": issue_type},
                     "summary": task["summary"],
                     "description": {
                         "type": "doc",
@@ -105,7 +105,7 @@ class JiraClient:
                             "content": [{"type": "text", "text": task["description"]}],
                         }],
                     },
-                    "labels": LABELS,
+                    "labels": labels,
                 },
             },
         )
@@ -115,6 +115,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--plan", required=True, type=Path)
     parser.add_argument("--project")
+    parser.add_argument("--issue-type")
     parser.add_argument("--env-file", type=Path, default=Path(".env"))
     parser.add_argument("--apply", action="store_true", help="create missing issues")
     args = parser.parse_args()
@@ -124,7 +125,11 @@ def main() -> int:
     project_key = args.project or os.environ.get("JIRA_PROJECT_KEY")
     if not project_key:
         raise RuntimeError("set JIRA_PROJECT_KEY or pass --project")
-    print(f"project={project_key} tasks={len(tasks)} mode={'apply' if args.apply else 'dry-run'}")
+    issue_type = args.issue_type or os.environ.get("JIRA_ISSUE_TYPE", "Task")
+    print(
+        f"project={project_key} issue_type={issue_type} "
+        f"tasks={len(tasks)} mode={'apply' if args.apply else 'dry-run'}"
+    )
     if not args.apply:
         for task in tasks:
             print(f"CREATE {task['summary']}")
@@ -140,7 +145,7 @@ def main() -> int:
             print(f"SKIP {issue['key']} {task['summary']}")
             skipped += 1
             continue
-        issue = client.create(project_key, task)
+        issue = client.create(project_key, issue_type, task)
         print(f"CREATE {issue['key']} {task['summary']}")
         created += 1
     print(f"created={created} skipped={skipped} total={len(tasks)}")

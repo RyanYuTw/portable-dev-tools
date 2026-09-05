@@ -6,6 +6,7 @@ Portable Agent Plugins 1.0 bundle for Claude Code and Codex.
 
 - `caveman`: concise response modes.
 - `shortcut-commit-sync`: links commits to Shortcut tickets when an integration is available.
+- `task-to-jira`: analyzes a feature, splits unfinished implementation into verifiable tasks, and synchronizes confirmed work to Jira.
 - Context7 MCP: current library documentation.
 - Playwright MCP: browser automation and web testing.
 - GitHub MCP: repositories, issues, pull requests, and Actions.

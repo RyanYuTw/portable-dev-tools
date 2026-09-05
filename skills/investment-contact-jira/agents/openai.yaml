@@ -1,7 +1,0 @@
-interface:
-  display_name: "投資接洽 Jira 實作同步"
-  short_description: "盤點投資接洽缺口並同步可驗收 Jira 任務"
-  default_prompt: "使用 $investment-contact-jira 盤點 investment_contact_p2，生成可驗收任務並在確認後同步 Jira。"
-
-policy:
-  allow_implicit_invocation: true

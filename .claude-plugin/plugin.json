@@ -1,6 +1,6 @@
 {
   "name": "portable-dev-tools",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Portable skills and MCP servers for software development across Claude Code and Codex.",
   "author": {
     "name": "Ryan"
