@@ -9,12 +9,15 @@ Portable Agent Plugins 1.0 bundle for Claude Code and Codex.
 - Context7 MCP: current library documentation.
 - Playwright MCP: browser automation and web testing.
 - GitHub MCP: repositories, issues, pull requests, and Actions.
+- GitLab MCP: projects, issues, merge requests, pipelines, and APIs on `gitlab.dbodm.com`.
+- Atlassian Rovo MCP: Jira Cloud, Confluence, and Compass.
 
 ## Requirements
 
 - Node.js 18 or newer and `npx` for Playwright MCP.
 - A GitHub fine-grained personal access token in `GITHUB_PERSONAL_ACCESS_TOKEN`.
 - Network access to Context7 and GitHub MCP endpoints.
+- Browser access for GitLab and Atlassian OAuth authorization.
 
 Do not commit tokens. Store `GITHUB_PERSONAL_ACCESS_TOKEN` in the shell or a secret manager on each computer.
 

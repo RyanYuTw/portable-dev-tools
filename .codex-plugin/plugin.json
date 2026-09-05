@@ -1,6 +1,6 @@
 {
   "name": "portable-dev-tools",
-  "version": "0.1.0",
+  "version": "0.2.0+codex.20260905112239",
   "description": "Portable skills and MCP servers for software development across Codex and Claude Code.",
   "author": {
     "name": "Ryan"
@@ -8,11 +8,18 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Portable Dev Tools",
-    "shortDescription": "Shared development skills, docs, browser testing, and GitHub tools.",
-    "longDescription": "A portable Agent Plugins 1.0 bundle with Caveman and Shortcut commit skills plus Context7, Playwright, and GitHub MCP servers.",
+    "shortDescription": "Shared development skills, docs, browser testing, and repository tools.",
+    "longDescription": "A portable Agent Plugins 1.0 bundle with shared skills plus Context7, Playwright, GitHub, GitLab, and Atlassian MCP servers.",
     "developerName": "Ryan",
     "category": "Developer Tools",
-    "capabilities": ["Documentation", "Browser automation", "GitHub", "Skills"],
+    "capabilities": [
+      "Documentation",
+      "Browser automation",
+      "GitHub",
+      "GitLab",
+      "Jira",
+      "Skills"
+    ],
     "defaultPrompt": [
       "Look up current library documentation with Context7.",
       "Test this web flow with Playwright.",
