@@ -16,10 +16,11 @@ Portable Agent Plugins 1.0 bundle for Claude Code and Codex.
 
 - Node.js 18 or newer and `npx` for Playwright MCP.
 - A GitHub fine-grained personal access token in `GITHUB_PERSONAL_ACCESS_TOKEN`.
-- Network access to Context7 and GitHub MCP endpoints.
-- Browser access for GitLab and Atlassian OAuth authorization.
+- A GitLab personal access token for `gitlab.dbodm.com` in `GITLAB_PERSONAL_ACCESS_TOKEN` (this instance has no native MCP endpoint, so GitLab MCP runs via `@zereight/mcp-gitlab` with a PAT instead of OAuth).
+- Network access to Context7, GitHub, and GitLab MCP endpoints.
+- Browser access for Atlassian OAuth authorization.
 
-Do not commit tokens. Store `GITHUB_PERSONAL_ACCESS_TOKEN` in the shell or a secret manager on each computer.
+Do not commit tokens. Store `GITHUB_PERSONAL_ACCESS_TOKEN` and `GITLAB_PERSONAL_ACCESS_TOKEN` in the shell or a secret manager on each computer.
 
 ## Claude Code
 
