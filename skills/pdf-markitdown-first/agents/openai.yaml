@@ -1,0 +1,4 @@
+interface:
+  display_name: "PDF MarkItDown First"
+  short_description: "Convert PDFs to Markdown before reading"
+  default_prompt: "Convert the PDF with Microsoft MarkItDown first, then read and analyze the generated Markdown."
