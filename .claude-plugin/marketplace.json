@@ -5,16 +5,29 @@
   },
   "metadata": {
     "description": "Portable Agent Plugins 1.0 tools shared by Claude Code and Codex.",
-    "version": "0.3.2"
+    "version": "0.4.0"
   },
   "plugins": [
     {
       "name": "portable-dev-tools",
       "source": "./",
-      "version": "0.3.2",
-      "description": "Shared development skills, current documentation, browser testing, GitHub, GitLab, and Jira tools.",
+      "version": "0.4.0",
+      "description": "Shared development skills for git, Shortcut, Jira, documents, slides, crawling, and Drive, plus Context7, Playwright, GitHub, GitLab, Atlassian, Shortcut, Fetch, and NotebookLM MCP servers.",
       "category": "development",
-      "keywords": ["skills", "mcp", "context7", "playwright", "github", "gitlab", "jira", "atlassian"]
+      "keywords": [
+        "skills",
+        "mcp",
+        "context7",
+        "playwright",
+        "github",
+        "gitlab",
+        "jira",
+        "atlassian",
+        "shortcut",
+        "notebooklm",
+        "crawl4ai",
+        "slides"
+      ]
     }
   ]
 }

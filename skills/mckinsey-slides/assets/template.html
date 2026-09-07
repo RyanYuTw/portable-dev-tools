@@ -1,0 +1,231 @@
+<!--
+  McKinsey 風格 Reveal.js 簡報範本。
+  這份檔案本身就是一份完整、可直接開啟的範例簡報，涵蓋 7 種內容版型各一張範例投影片。
+  使用方式：複製整份檔案，把 <!-- SLIDE: xxx --> 標記的 <section> 區塊替換成實際內容，
+  不需要的版型直接刪掉該 <section>，需要同版型多張就複製對應 <section> 區塊。
+  CSS／JS 不需要更動，除非使用者明確要求調整配色或互動行為。
+-->
+<!DOCTYPE html>
+<html lang="zh-TW"><head><meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>簡報標題</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css" integrity="sha384-AJKv9Ui5SfA0VsFksFI9GuA1ztX9Ca3CLP6HGfX4YY/tYSVodC+PUszaQZFIlkuy" crossorigin="anonymous"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" integrity="sha384-YgvgKeZJykuztG+iQPoZHNZENTFZvOcOJ/uRzmJTje6GHYN9zAw+y5rx/L8MQKA/" crossorigin="anonymous"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet"/>
+<style>
+/* ============ McKinsey 風格主題 ============
+   核心規則：白底、單一強調藍、扁平無光暈/漸層、細線取代陰影。
+   不要為了「好看」加漸層、玻璃感、霓虹發光——那些是科技新創 pitch deck 的語彙，不是顧問報告的語彙。 */
+:root{--accent:#0F6FB5;--accent2:#0B4F82;--success:#2E7D32;--warn:#B7791F;--ink:#1C2B39;--muted:#5B6670;--line:#D8DDE3;--gray:#9AA4AC;}
+.reveal{font-family:'Noto Sans TC','Inter','Segoe UI',sans-serif;color:var(--ink);}
+.reveal h1,.reveal h2{font-family:'Noto Sans TC','Inter','Segoe UI',sans-serif;font-weight:900;letter-spacing:-.01em;}
+.reveal h1{font-size:1.9em;color:#0B1F33;}
+.reveal h2{font-size:1.12em;color:#0B1F33;margin-bottom:.15em;line-height:1.35;}
+.reveal .progress{color:var(--accent);height:3px;}
+.reveal .slide-number{background:transparent;color:var(--muted);font-size:.5em;}
+.reveal .fragment{opacity:.15;}.reveal .fragment.visible{opacity:1;}
+.reveal-viewport{background:#ffffff;}
+.reveal section.std{text-align:left;}
+/* kicker = Exhibit 編號標籤，麥肯錫簡報的招牌元素之一 */
+.kicker{display:inline-block;font-size:.36em;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:.6em;}
+.title-rule{display:block;width:64px;height:3px;background:var(--accent);margin:.3em 0 .9em;}
+.title-slide{text-align:left;padding-left:6%;}
+.title-slide .tag{display:inline-block;color:var(--accent);font-size:.4em;letter-spacing:.12em;text-transform:uppercase;margin-bottom:1em;font-weight:700;}
+.title-slide h1{color:#0B1F33;}
+.blist{list-style:none;padding:0;margin:.4em 0 0;}
+.blist li{position:relative;padding:12px 0 12px 24px;font-size:.54em;line-height:1.55;border-bottom:1px solid var(--line);color:#2A3B4A;}
+.blist li::before{content:'';position:absolute;left:2px;top:20px;width:8px;height:8px;background:var(--accent);}
+.adv-grid{display:grid;gap:16px;margin-top:.6em;}
+.adv-grid.cols-2{grid-template-columns:repeat(2,1fr);}.adv-grid.cols-3{grid-template-columns:repeat(3,1fr);}
+.adv-grid.cols-4{grid-template-columns:repeat(4,1fr);}.adv-grid.cols-1{grid-template-columns:1fr;}
+.adv-card{background:#fff;border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:4px;padding:18px 16px;text-align:left;}
+.adv-card .adv-title{font-size:.5em;font-weight:700;color:#0B1F33;margin-bottom:8px;}
+.adv-card .adv-desc{font-size:.4em;color:var(--muted);line-height:1.6;}
+.flow{display:flex;align-items:stretch;margin-top:.8em;}
+.flow-node{flex:1;background:#fff;border:1px solid var(--line);border-radius:4px;padding:20px 14px;text-align:center;}
+.flow-node.mid{border-color:var(--accent);border-width:2px;}
+.flow-node .fn-title{font-size:.5em;font-weight:700;color:#0B1F33;}
+.flow-node .fn-sub{font-size:.36em;color:var(--muted);margin-top:6px;}
+.flow-arrow{display:flex;align-items:center;color:var(--gray);font-size:1.3em;padding:0 8px;}
+.timeline{position:relative;padding-left:34px;margin-top:.8em;}
+.timeline::before{content:'';position:absolute;left:10px;top:6px;bottom:6px;width:2px;background:var(--line);}
+.timeline-item{position:relative;margin-bottom:20px;}
+.timeline-item::before{content:'';position:absolute;left:-26px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--accent);border:2px solid #fff;box-shadow:0 0 0 1px var(--line);}
+.timeline-item .ti-date{color:var(--accent);font-weight:700;font-size:.48em;}
+.timeline-item .ti-text{color:#2A3B4A;font-size:.44em;margin-top:2px;}
+.stat-row{display:flex;gap:16px;justify-content:flex-start;margin-top:1em;}
+.stat-card{background:#fff;border:1px solid var(--line);border-top:3px solid var(--accent);border-radius:4px;padding:24px 20px;text-align:left;flex:1;}
+.stat-card .num{font-size:1.5em;font-weight:900;color:var(--accent);line-height:1;}
+.stat-card .label{font-size:.38em;color:var(--muted);margin-top:10px;line-height:1.5;}
+.viz-wrap{position:relative;height:280px;border-radius:4px;overflow:hidden;margin-top:.6em;border:1px solid var(--line);}
+.viz-pane{position:absolute;inset:0;padding:24px 30px;display:flex;flex-direction:column;justify-content:center;}
+.viz-before{background:#F5F2EE;}
+.viz-after{background:#EEF4F9;clip-path:inset(0 100% 0 0);}
+.viz-pane ul{list-style:none;padding:0;margin:0;font-size:.42em;line-height:2;color:#2A3B4A;}
+.viz-divider{position:absolute;top:0;left:0;width:2px;height:100%;background:var(--accent);pointer-events:none;}
+.viz-tag{position:absolute;top:10px;font-size:.32em;letter-spacing:.1em;padding:3px 10px;border-radius:2px;text-transform:uppercase;}
+.viz-tag.l{left:12px;background:#F5F2EE;color:var(--warn);border:1px solid var(--line);}
+.viz-tag.r{right:12px;background:#EEF4F9;color:var(--accent);border:1px solid var(--line);}
+.viz-slider{width:80%;margin:16px auto 0;display:block;accent-color:var(--accent);}
+.viz-hint{text-align:center;font-size:.32em;color:var(--muted);margin-top:6px;}
+.end-slide{text-align:left;padding-left:6%;}.end-slide h1{color:#0B1F33;}
+.end-slide .tagline{font-size:.5em;color:var(--muted);margin-top:.4em;}
+.chart-wrap{margin-top:.6em;display:flex;justify-content:flex-start;}
+.chart-wrap canvas{max-width:100%;}
+.slide-row{display:flex;gap:28px;align-items:center;margin-top:.4em;}
+.slide-col-text{flex:1.2;min-width:0;}
+.slide-col-img{flex:1;min-width:0;}
+.slide-col-img img{width:100%;border-radius:4px;box-shadow:0 4px 14px rgba(11,31,51,.14);display:block;}
+.source-note{margin-top:1.2em;font-size:.3em;color:var(--gray);}
+@media print{ .reveal .fragment{opacity:1 !important;} }
+</style></head><body>
+<div class="reveal"><div class="slides">
+
+<!-- SLIDE: cover（封面，每份簡報只需一張，放在最前面） -->
+<section data-background-color="#ffffff" class="bg-hero">
+  <div class="title-slide">
+    <div class="tag">副標／一句話定位（例如：2026 上半年市場擴張策略提案）</div>
+    <h1>簡報主標題</h1>
+  </div>
+</section>
+
+<!-- SLIDE: bullets（一般要點，3-5 點，不需要視覺化的內容用這個） -->
+<section data-background-color="#ffffff" class="bg-glow std">
+  <span class="kicker">EXHIBIT 01</span>
+  <h2>洞見型標題：直接寫結論，不要寫主題標籤</h2>
+  <span class="title-rule"></span>
+  <ul class="blist">
+    <li>重點一：具體、可驗證的陳述句</li>
+    <li>重點二：與標題的結論互相支撐</li>
+    <li>重點三：與其他要點互斥、不重疊（MECE）</li>
+  </ul>
+</section>
+
+<!-- SLIDE: cards（並列的概念／子主題，2-4 項） -->
+<section data-background-color="#ffffff" class="bg-glow std">
+  <span class="kicker">EXHIBIT 02</span>
+  <h2>洞見型標題：說明這幾項並列概念共同支持的結論</h2>
+  <span class="title-rule"></span>
+  <div class="adv-grid cols-3">
+    <div class="adv-card"><div class="adv-title">子主題 A</div><div class="adv-desc">一句話說明，聚焦單一重點</div></div>
+    <div class="adv-card"><div class="adv-title">子主題 B</div><div class="adv-desc">一句話說明，聚焦單一重點</div></div>
+    <div class="adv-card"><div class="adv-title">子主題 C</div><div class="adv-desc">一句話說明，聚焦單一重點</div></div>
+  </div>
+</section>
+
+<!-- SLIDE: timeline（時間序列／階段，依序排列） -->
+<section data-background-color="#ffffff" class="bg-glow std">
+  <span class="kicker">EXHIBIT 03</span>
+  <h2>洞見型標題：說明這個時間軸想傳達的整體趨勢或結論</h2>
+  <span class="title-rule"></span>
+  <div class="timeline">
+    <div class="timeline-item"><div class="ti-date">階段 1</div><div class="ti-text">說明內容</div></div>
+    <div class="timeline-item"><div class="ti-date">階段 2</div><div class="ti-text">說明內容</div></div>
+    <div class="timeline-item"><div class="ti-date">階段 3</div><div class="ti-text">說明內容</div></div>
+  </div>
+</section>
+
+<!-- SLIDE: kpi（少量關鍵指標，2-4 項，數字本身就是重點） -->
+<section data-background-color="#ffffff" class="bg-glow std">
+  <span class="kicker">EXHIBIT 04</span>
+  <h2>洞見型標題：用結論總結這些數字代表的意義</h2>
+  <span class="title-rule"></span>
+  <div class="stat-row">
+    <div class="stat-card"><div class="num">24%</div><div class="label">指標說明一</div></div>
+    <div class="stat-card"><div class="num">3.2x</div><div class="label">指標說明二</div></div>
+    <div class="stat-card"><div class="num">18</div><div class="label">指標說明三</div></div>
+  </div>
+  <p class="source-note">資料來源：（引用實際數據出處，沒有就整段刪掉）</p>
+</section>
+
+<!-- SLIDE: compare（前後對比／優缺點／A vs B，可拖曳滑桿揭露） -->
+<section data-background-color="#ffffff" class="bg-glow std">
+  <span class="kicker">EXHIBIT 05</span>
+  <h2>洞見型標題：直接陳述「方案」相對「現況」改善了什麼</h2>
+  <span class="title-rule"></span>
+  <div class="viz-wrap">
+    <div class="viz-pane viz-before"><span class="viz-tag l">現況</span>
+      <ul><li>現況描述一</li><li>現況描述二</li></ul>
+    </div>
+    <div class="viz-pane viz-after" id="viz-after-0"><span class="viz-tag r">方案</span>
+      <ul><li>方案描述一</li><li>方案描述二</li></ul>
+    </div>
+    <div class="viz-divider" id="viz-divider-0"></div>
+  </div>
+  <input class="viz-slider" data-idx="0" type="range" min="0" max="100" value="0">
+  <div class="viz-hint">← 拖曳滑桿，揭露方案 →</div>
+</section>
+
+<!-- SLIDE: flow（架構／流程／因果鏈，2-4 節點，依序） -->
+<section data-background-color="#ffffff" class="bg-glow std">
+  <span class="kicker">EXHIBIT 06</span>
+  <h2>洞見型標題：說明這個流程/架構要傳達的重點</h2>
+  <span class="title-rule"></span>
+  <div class="flow">
+    <div class="flow-node"><div class="fn-title">節點一</div><div class="fn-sub">說明</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node mid"><div class="fn-title">節點二</div><div class="fn-sub">說明</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node"><div class="fn-title">節點三</div><div class="fn-sub">說明</div></div>
+  </div>
+</section>
+
+<!-- SLIDE: chart（可比較的數列/趨勢數據，3-8 項；只用真實數字，絕不捏造）
+     資料放在 data-chart 的 JSON 屬性裡：{"type":"bar|line|pie","labels":[...],"values":[...]}
+     下面 script 區塊的邏輯會自動把數值最大（或最該被強調）的那個項目上色為強調藍，其餘一律灰階——
+     這是麥肯錫圖表的核心規則：一張圖只凸顯一個重點，不要每個類別都上色。
+     若想強調的不是最大值（例如結論是「最小的那項」），把該項的 value 邏輯調整一下，或直接手動修改下方 script 裡 maxIdx 的算法。 -->
+<section data-background-color="#ffffff" class="bg-glow std">
+  <span class="kicker">EXHIBIT 07</span>
+  <h2>洞見型標題：直接講出圖表要傳達的結論（例如「Q4 營收顯著高於其他季度」）</h2>
+  <span class="title-rule"></span>
+  <div class="chart-wrap">
+    <canvas class="chart-canvas" width="760" height="360" data-chart='{"type":"bar","labels":["Q1","Q2","Q3","Q4"],"values":[12,15,14,22]}'></canvas>
+  </div>
+  <p class="source-note">資料來源：（引用實際數據出處，沒有就整段刪掉）</p>
+</section>
+
+<!-- SLIDE: end（結尾，每份簡報只需一張，放在最後） -->
+<section data-background-color="#ffffff" class="bg-hero">
+  <div class="end-slide">
+    <h1>謝謝聆聽</h1>
+    <p class="tagline">副標／一句話總結（可與封面呼應）</p>
+  </div>
+</section>
+
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js" integrity="sha384-M/JtqCVlLcK9lwVnBnMXP0V577CBULkjodKsR/PITOe4MSKNbbwqCemEyluOw0+5" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" integrity="sha384-NrKB+u6Ts6AtkIhwPixiKTzgSKNblyhlk0Sohlgar9UHUBzai/sgnNNWWd291xqt" crossorigin="anonymous"></script>
+<script>
+Reveal.initialize({hash:true,transition:'slide',backgroundTransition:'fade',center:true,progress:true,controls:true,slideNumber:'c/t',plugins:[]});
+
+// compare 版型的拖曳揭露互動
+document.querySelectorAll('.viz-slider').forEach(function(s){
+  s.addEventListener('input',function(){
+    var i=this.dataset.idx,v=+this.value;
+    document.getElementById('viz-after-'+i).style.clipPath='inset(0 '+(100-v)+'% 0 0)';
+    document.getElementById('viz-divider-'+i).style.left=v+'%';
+  });
+});
+
+// chart 版型：只把最重要的那個資料點（預設=最大值）上色為強調藍，其餘一律中性灰
+document.querySelectorAll('.chart-canvas').forEach(function(c){
+  var d=JSON.parse(c.dataset.chart);
+  var maxIdx=0; d.values.forEach(function(v,i){ if(v>d.values[maxIdx]) maxIdx=i; });
+  var colors=d.labels.map(function(_,i){return i===maxIdx?'#0F6FB5':'#B7C0C9';});
+  new Chart(c.getContext('2d'),{
+    type:d.type,
+    data:{labels:d.labels,datasets:[{
+      data:d.values,
+      backgroundColor:d.type==='line'?'rgba(15,111,181,.12)':colors,
+      borderColor:d.type==='line'?'#0F6FB5':'#ffffff',
+      borderWidth:d.type==='line'?2:1,
+      tension:.3,
+      fill:d.type==='line'
+    }]},
+    options:{responsive:false,plugins:{legend:{display:d.type==='pie',labels:{color:'#1C2B39'}}},
+      scales:d.type==='pie'?{}:{x:{ticks:{color:'#5B6670'},grid:{color:'rgba(11,31,51,.08)'}},y:{ticks:{color:'#5B6670'},grid:{color:'rgba(11,31,51,.08)'}}}}
+  });
+});
+</script>
+</body></html>

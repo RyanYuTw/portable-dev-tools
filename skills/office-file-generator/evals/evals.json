@@ -1,0 +1,44 @@
+{
+  "skill_name": "office-file-generator",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "幫我生成一個 Excel 檔，裡面有一張員工績效表，欄位包括：姓名、部門、Q1銷售額、Q2銷售額、Q3銷售額、Q4銷售額、年度總計（用公式自動加總）。加入 3 筆範例資料，標題列要有藍色背景白色文字。存到 /tmp/performance.xlsx",
+      "expected_output": "生成 /tmp/performance.xlsx，包含標題列（藍底白字）、3 筆員工資料、年度總計欄使用 SUM 公式",
+      "files": [],
+      "expectations": [
+        "成功建立 /tmp/performance.xlsx 檔案",
+        "檔案大小大於 0 bytes",
+        "包含姓名、部門、Q1-Q4銷售額、年度總計等欄位",
+        "年度總計欄使用 SUM 公式",
+        "標題列有顏色樣式"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "我要做一份 5 頁的簡報介紹人工智慧的應用，請幫我生成 PowerPoint 檔案。第一頁是標題頁（標題：人工智慧應用趨勢，副標：2025年報告），接下來 4 頁分別介紹：自然語言處理、電腦視覺、推薦系統、自動駕駛。每頁要有標題和 3 個重點條列。存到 /tmp/ai_presentation.pptx",
+      "expected_output": "生成 /tmp/ai_presentation.pptx，共 5 張投影片，第一張為標題頁，後四張各含主題標題與 3 個條列重點",
+      "files": [],
+      "expectations": [
+        "成功建立 /tmp/ai_presentation.pptx 檔案",
+        "檔案大小大於 0 bytes",
+        "包含至少 5 張投影片",
+        "第一張投影片包含標題文字",
+        "後續投影片包含條列內容"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "幫我生成一份 Word 格式的工作報告，內容如下：標題「2025年5月工作報告」，包含以下三個章節：1) 本月完成工作（3個項目）2) 下月計畫（3個項目）3) 需要支援事項（2個項目）。每個章節要有標題樣式，內容用條列格式。最後加上一個簡單的表格（工作項目 vs 完成度 vs 備註，3列資料）。存到 /tmp/monthly_report.docx",
+      "expected_output": "生成 /tmp/monthly_report.docx，包含主標題、三個章節（各有標題樣式）、條列內容、以及一個 3 列資料的表格",
+      "files": [],
+      "expectations": [
+        "成功建立 /tmp/monthly_report.docx 檔案",
+        "檔案大小大於 0 bytes",
+        "包含文件標題",
+        "包含至少 3 個章節標題",
+        "包含一個表格"
+      ]
+    }
+  ]
+}
