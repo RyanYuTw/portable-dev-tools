@@ -14,6 +14,8 @@ hits=()
 while IFS= read -r f; do
   [ -z "$f" ] && continue
   base="$(basename "$f")"
+  # This scanner is itself named check_secrets.sh; do not flag its filename.
+  [ "$base" = "check_secrets.sh" ] && continue
   case "$base" in
     .env|.env.local|.env.production|.env.development|.env.staging|.env.test|*.env)
       hits+=("$f") ;;

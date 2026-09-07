@@ -6,8 +6,8 @@ set -euo pipefail
 branch="$(git rev-parse --abbrev-ref HEAD)"
 
 if [ "$branch" = "main" ] || [ "$branch" = "master" ]; then
-  echo "⚠️  目前分支是 $branch，不會自動 push。"
-  echo "若真的要 push 到 $branch，請手動確認後自行執行 git push。"
+  echo "⚠️  目前分支是 ${branch}，不會自動 push。"
+  echo "若真的要 push 到 ${branch}，請手動確認後自行執行 git push。"
   exit 1
 fi
 

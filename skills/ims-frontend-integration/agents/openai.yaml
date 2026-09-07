@@ -1,0 +1,4 @@
+interface:
+  display_name: "IMS Frontend Integration"
+  short_description: "整合 IMS 前端 OTP、JWT 與部署建置流程"
+  default_prompt: "Use $ims-frontend-integration to update aims-front authentication and sync a verified build into ims/dist."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Auto Commit & Push"
+  short_description: "安全 staging、產生 Conventional Commits 訊息並 push"
+  default_prompt: "Use $auto-commit-push to stage relevant changes, write a Conventional Commits message, and push safely to the current branch."

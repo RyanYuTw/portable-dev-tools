@@ -21,6 +21,7 @@ Git and issue tracking
 - `shortcut-token-renew`: checks and renews an expired `SHORTCUT_API_TOKEN` across local config files.
 - `shortcut-meeting-minutes`: generates meeting minutes from Shortcut data and exports them to DOCX.
 - `task-to-jira`: analyzes a feature, splits unfinished implementation into verifiable tasks, and synchronizes confirmed work to Jira.
+- `ims-frontend-integration`: integrates IMS frontend OTP/JWT authentication, builds, and deployment synchronization.
 
 Documents and slides
 
@@ -81,6 +82,8 @@ codex plugin add portable-dev-tools@personal
 ## Cross-computer sharing
 
 Put this directory in a private or public Git repository. Clone it on another computer, set the required environment variables there, and install it from that clone's marketplace. Machine-specific credentials remain outside Git.
+
+The version-controlled source of truth is the `skills/` directory and `.mcp.json`. Local Codex runtime settings and bundled app MCPs—such as `node_repl` and `computer-use`, which depend on a specific installation and absolute paths—are intentionally not copied into this portable plugin. Install or update the plugin after syncing so the shared skills and MCP servers are loaded by Codex.
 
 ## Security
 
