@@ -102,6 +102,19 @@ scripts/install-git-hooks.sh /path/to/repo
 
 Record a reviewed commit with `echo <full-sha> >> .claude/state/reviewed`. Remove both files from `.git/hooks/` to disable them.
 
+## Syncing to Codex
+
+Codex caches a plugin as a **version-locked snapshot**, not a live link to this directory. Editing files here without changing the version leaves Codex running the previous snapshot, and `codex plugin add` reports success either way — a silent staleness that has already bitten us once.
+
+~~~sh
+scripts/sync-codex.sh            # bump the patch version, reinstall, verify
+scripts/sync-codex.sh 0.7.0      # set the version explicitly
+~~~
+
+The script bumps `.codex-plugin/plugin.json`, reinstalls from the `personal` marketplace (override with `MARKETPLACE=`), then compares the cache against this directory file by file and exits non-zero if they differ — so a stale cache fails loudly instead of passing quietly. Commit the version change afterwards.
+
+Claude Code needs none of this: it reads this directory through a directory marketplace, so edits apply to the next session directly.
+
 ## Jira/GitLab workflow
 
 For a Jira-tracked GitLab change:
