@@ -8,6 +8,7 @@
 # 用法：
 #   scripts/sync-codex.sh              # 修訂號 +1（0.6.1 → 0.6.2）
 #   scripts/sync-codex.sh 0.7.0        # 指定版本
+#   scripts/sync-codex.sh --check      # 只驗證目前快取，不提版本也不安裝
 #   MARKETPLACE=personal scripts/sync-codex.sh
 set -euo pipefail
 
@@ -19,6 +20,28 @@ marketplace="${MARKETPLACE:-personal}"
 command -v codex >/dev/null || { echo "錯誤：找不到 codex 指令" >&2; exit 1; }
 
 plugin=$(python3 -c "import json;print(json.load(open('$manifest'))['name'])")
+
+# ── --check：只驗證，不提版本也不安裝 ────────────────────
+if [ "${1:-}" = "--check" ]; then
+  cache=$(ls -d "$HOME/.codex/plugins/cache/${marketplace}/${plugin}"/*/ 2>/dev/null | sort -V | tail -1)
+  if [ -z "$cache" ]; then
+    echo "Codex 尚未安裝此 plugin。請執行 scripts/sync-codex.sh" >&2
+    exit 1
+  fi
+  cache="${cache%/}"
+  drift=$(diff -r -q \
+    -x '.git' -x 'node_modules' -x '__pycache__' -x '.DS_Store' -x '*.pyc' -x 'venv' -x '.venv' \
+    "$root" "$cache" 2>&1) || true
+  if [ -n "$drift" ]; then
+    echo "Codex 快取落後於工作目錄：" >&2
+    printf '%s\n' "$drift" | sed 's/^/  /' >&2
+    echo >&2
+    echo "請先執行 scripts/sync-codex.sh 再推送。" >&2
+    exit 1
+  fi
+  echo "Codex 快取與來源一致（$(basename "$cache")）✓"
+  exit 0
+fi
 
 # ── 提版本 ───────────────────────────────────────────────
 new_version=$(python3 - "$manifest" "${1:-}" <<'PY'

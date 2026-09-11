@@ -113,6 +113,15 @@ scripts/sync-codex.sh 0.7.0      # set the version explicitly
 
 The script bumps `.codex-plugin/plugin.json`, reinstalls from the `personal` marketplace (override with `MARKETPLACE=`), then compares the **whole tree** against this directory and exits non-zero on any difference — so a stale cache fails loudly instead of passing quietly. Only VCS and build noise is excluded (`.git`, `node_modules`, `__pycache__`, `.DS_Store`, `*.pyc`, `venv`, `.venv`); everything the plugin ships, documentation included, is checked. Commit the version change afterwards.
 
+The order matters: **finish every edit, then sync, then commit the version bump** (`git commit --amend` folds it into the same commit). Syncing halfway through leaves GitHub ahead of Codex with nothing to show for it — a mistake made twice while building this, which is why it is now enforced rather than documented:
+
+~~~sh
+scripts/install-plugin-hooks.sh   # once per clone
+scripts/sync-codex.sh --check     # what the hook runs
+~~~
+
+That installs a `pre-push` hook in this repository which refuses to push while the Codex cache lags behind the working tree, and names the files that differ.
+
 Claude Code needs none of this: it reads this directory through a directory marketplace, so edits apply to the next session directly.
 
 ## Jira/GitLab workflow

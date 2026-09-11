@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# 這個 plugin 儲存庫自己用的 pre-push：推送前確認 Codex 快取已跟上工作目錄。
+#
+# 要擋的情境：改檔案 → 跑 sync → 又改了幾個檔案 → 提交推送。
+# 這時 GitHub 上是新的、Codex 手上是舊的，而且沒有任何跡象。實際發生過兩次。
+#
+# 安裝：scripts/install-plugin-hooks.sh
+set -uo pipefail
+
+root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
+[ -x "$root/scripts/sync-codex.sh" ] || exit 0
+
+if "$root/scripts/sync-codex.sh" --check; then
+  exit 0
+fi
+
+cat >&2 <<'MSG'
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  推送已被擋下：Codex 快取落後於即將推送的內容
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+正確順序是：所有檔案改完 → scripts/sync-codex.sh → 提交版本變更 → 推送
+
+若版本變更尚未提交，可用 git commit --amend 併進同一個 commit。
+
+MSG
+exit 1
