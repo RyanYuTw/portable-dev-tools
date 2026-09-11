@@ -66,6 +66,19 @@ Separate permission failures, missing assignee, missing estimates, unavailable w
 
 Progress is based on child-task completion, never on the number of parent tickets or Jira records created.
 
+### Parent status is derived, not independent progress
+
+A parent ticket's status is derived from its children and carries no progress of its own:
+
+- Any child in progress or completed means the parent is in progress.
+- A parent is only a candidate for completion once every child is completed, and closing it needs human confirmation.
+
+Three consequences for the report:
+
+- Never count a parent in the numerator or the denominator. Counting both a parent and its children counts the same work twice.
+- A parent marked in progress while every child is still not started means the status is stale, not that work began. Report it under 阻塞與待確認.
+- A parent still marked not started while a child is in progress or completed is the same staleness in the other direction. Report the child evidence and flag the parent.
+
 When every child has a verified comparable estimate:
 
     completion percentage =
