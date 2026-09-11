@@ -49,23 +49,24 @@ echo "已安裝 → $cache"
 # ── 驗證快取真的是新的 ──────────────────────────────────
 [ -d "$cache" ] || { echo "錯誤：預期的快取目錄不存在，Codex 可能沿用了舊快照" >&2; exit 1; }
 
-fail=0
-for dir in skills hooks scripts; do
-  [ -d "$root/$dir" ] || continue
-  src=$(find "$root/$dir" -type f | wc -l | tr -d ' ')
-  dst=$(find "$cache/$dir" -type f 2>/dev/null | wc -l | tr -d ' ')
-  if [ "$src" = "$dst" ]; then
-    printf '  %-8s %s 個檔案 ✓\n' "$dir" "$src"
-  else
-    printf '  %-8s 來源 %s vs 快取 %s ✗\n' "$dir" "$src" "$dst"; fail=1
-  fi
-done
+# 比對整棵樹，不是只比 skills——曾經發生過 README 落後一版而驗證仍回報成功。
+# 排除的都是不隨 plugin 發佈的雜訊。
+diff_output=$(diff -r -q \
+  -x '.git' -x 'node_modules' -x '__pycache__' -x '.DS_Store' -x '*.pyc' -x 'venv' -x '.venv' \
+  "$root" "$cache" 2>&1) || true
 
-if ! diff -r -q "$root/skills" "$cache/skills" >/dev/null 2>&1; then
-  echo "  skills 內容與來源不符 ✗" >&2; fail=1
+if [ -n "$diff_output" ]; then
+  echo "快取與來源不一致：" >&2
+  printf '%s\n' "$diff_output" | sed 's/^/  /' >&2
+  echo "同步驗證失敗" >&2
+  exit 1
 fi
 
-[ "$fail" = 0 ] || { echo "同步驗證失敗" >&2; exit 1; }
+for dir in skills hooks scripts; do
+  [ -d "$root/$dir" ] || continue
+  printf '  %-8s %s 個檔案 ✓\n' "$dir" "$(find "$root/$dir" -type f | wc -l | tr -d ' ')"
+done
+printf '  %-8s 全樹比對通過 ✓\n' "整體"
 
 echo
 echo "同步完成。記得提交 .codex-plugin/plugin.json 的版本變更。"

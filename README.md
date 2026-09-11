@@ -111,7 +111,7 @@ scripts/sync-codex.sh            # bump the patch version, reinstall, verify
 scripts/sync-codex.sh 0.7.0      # set the version explicitly
 ~~~
 
-The script bumps `.codex-plugin/plugin.json`, reinstalls from the `personal` marketplace (override with `MARKETPLACE=`), then compares the cache against this directory file by file and exits non-zero if they differ — so a stale cache fails loudly instead of passing quietly. Commit the version change afterwards.
+The script bumps `.codex-plugin/plugin.json`, reinstalls from the `personal` marketplace (override with `MARKETPLACE=`), then compares the **whole tree** against this directory and exits non-zero on any difference — so a stale cache fails loudly instead of passing quietly. Only VCS and build noise is excluded (`.git`, `node_modules`, `__pycache__`, `.DS_Store`, `*.pyc`, `venv`, `.venv`); everything the plugin ships, documentation included, is checked. Commit the version change afterwards.
 
 Claude Code needs none of this: it reads this directory through a directory marketplace, so edits apply to the next session directly.
 
