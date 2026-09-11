@@ -46,6 +46,14 @@ this workspace: only commits with a `[sc-NN]` prefix showed up there, ones
 without it did not, even on a correctly-named branch). Branches unrelated to
 a ticket keep plain Conventional Commits with no prefix.
 
+**Jira/GitLab traceability (only when the current task is Jira-tracked):**
+
+- Use the child Jira key in the commit subject, for example `feat(KNDU-124): add case merge authorization`.
+- A parent key alone is not enough to identify a Jira subtask.
+- If the task is Jira-tracked but no child key is known, stop before committing and ask for the key or direct the user to `task-to-jira`.
+- A commit creates execution evidence; it does not by itself prove that the Jira child is complete.
+- After the commit is pushed, `task-to-jira` may link the commit and transition the child only after MR merge, CI/acceptance evidence, and the exact Jira transition are verified.
+
 ### 2. Choose files to stage
 
 - Only add files relevant to the current task that are actually

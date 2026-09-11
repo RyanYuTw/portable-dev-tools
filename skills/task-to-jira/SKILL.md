@@ -76,3 +76,22 @@ Default target unless the user specifies otherwise:
 6. Report local implementation progress separately from Jira synchronization progress.
 
 Stop and ask for direction if the Jira project, issue type, required field, or intended status cannot be verified.
+
+## Commit-to-subtask traceability
+
+Use the child Jira key in the commit message, for example:
+
+~~~text
+feat(KNDU-124): add case merge authorization
+~~~
+
+A parent key alone is not enough to identify a child task. When a commit or MR contains a Jira key:
+
+1. Parse the key and read the Jira issue.
+2. Verify that it belongs to the target project and is a Sub-task or other approved child issue type.
+3. Add the commit/MR URL and verification evidence to that child issue.
+4. Treat the linked commit as 已執行 evidence, not proof of completion.
+5. Auto-transition the child only when the commit is pushed, the MR is merged, CI is successful or acceptance evidence is explicit, and the exact completed transition was read from Jira metadata.
+6. Read the child issue back and report the resulting status.
+
+If multiple child keys occur in one commit, link each candidate but require confirmation before completing any of them. A local commit without a pushed GitLab URL or test evidence must not automatically mark a Jira child as completed.

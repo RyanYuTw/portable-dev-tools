@@ -21,6 +21,10 @@ Git and issue tracking
 - `shortcut-token-renew`: checks and renews an expired `SHORTCUT_API_TOKEN` across local config files.
 - `shortcut-meeting-minutes`: generates meeting minutes from Shortcut data and exports them to DOCX.
 - `task-to-jira`: analyzes a feature, splits unfinished implementation into verifiable tasks, and synchronizes confirmed work to Jira.
+- `weekly-jira-report`: generates a read-only weekly report with per-ticket execution evidence and child-task completion progress.
+- `jira-breakdown`: splits a requirement into Jira tasks and sub-tasks, fills start/due dates, priority, category and labels, and asks who to assign before writing.
+- `jira-ticket-plan`: reads a Jira ticket with its parent and siblings, verifies it against the repository, and proposes an execution plan that waits for approval.
+- `weekly-report-mail`: turns the weekly report into a mail, collects the figures only a human can supply, and sends it after explicit confirmation.
 - `ims-frontend-integration`: integrates IMS frontend OTP/JWT authentication, builds, and deployment synchronization.
 
 Documents and slides
@@ -84,6 +88,49 @@ codex plugin add portable-dev-tools@personal
 Put this directory in a private or public Git repository. Clone it on another computer, set the required environment variables there, and install it from that clone's marketplace. Machine-specific credentials remain outside Git.
 
 The version-controlled source of truth is the `skills/` directory and `.mcp.json`. Local Codex runtime settings and bundled app MCPs—such as `node_repl` and `computer-use`, which depend on a specific installation and absolute paths—are intentionally not copied into this portable plugin. Install or update the plugin after syncing so the shared skills and MCP servers are loaded by Codex.
+
+## Git hooks
+
+Enforcement lives in git hooks rather than agent-specific hooks, so it applies to Codex, Claude Code and a bare terminal alike. Agent-level hooks resolve the repository from the session working directory, which checks the wrong repository as soon as a command changes directory.
+
+~~~sh
+scripts/install-git-hooks.sh /path/to/repo
+~~~
+
+- `pre-push`: refuses the push while the full SHA of `HEAD` is absent from `.claude/state/reviewed`, and prints the review options for both tools.
+- `post-commit`: extracts the Jira keys from the commit message and prints the follow-up actions — transition a not-started ticket to in progress, ask before completing a sub-task, map the category from the commit type.
+
+Record a reviewed commit with `echo <full-sha> >> .claude/state/reviewed`. Remove both files from `.git/hooks/` to disable them.
+
+## Jira/GitLab workflow
+
+For a Jira-tracked GitLab change:
+
+1. Use `task-to-jira` to inspect the repository, split unfinished work into independently verifiable Jira tasks, and preview the exact fields before any Jira write.
+2. Put the child Jira key in the commit subject, for example `feat(KNDU-124): add case merge authorization`.
+3. Treat a linked commit as execution evidence. Only auto-complete the child after the pushed commit is in a merged MR and CI/acceptance evidence succeeds.
+4. Use `weekly-jira-report` to show one row per Jira ticket, including status, this-period commits/MRs/worklogs, ticket progress, and completion evidence.
+
+The GitLab MCP uses `GITLAB_PERSONAL_ACCESS_TOKEN` and `https://gitlab.dbodm.com/api/v4`; the Atlassian MCP uses browser OAuth. Keep both credentials outside Git.
+
+The detailed Traditional Chinese setup and operation manual is available at [docs/AI-Jira-GitLab-工作流設定操作手冊.md](docs/AI-Jira-GitLab-工作流設定操作手冊.md).
+
+## Codex-to-Claude synchronization
+
+This repository is the portable synchronization boundary between Codex and Claude Code:
+
+- Shared Skills live under `skills/` and are loaded by both plugin runtimes.
+- Shared MCP servers live in `.mcp.json` and use environment variables or OAuth, not machine-specific secrets.
+- The current shared MCP set includes Context7, Playwright, GitHub, GitLab, Atlassian, Shortcut, Fetch, and NotebookLM.
+- Codex-only runtime services such as `node_repl`, computer-use backends, and absolute application paths stay in Codex local configuration and are not copied into Claude Code.
+
+To use the synchronized bundle in Claude Code:
+
+~~~sh
+claude --plugin-dir /path/to/portable-dev-tools
+~~~
+
+After pulling a newer version, start a new Claude Code session so the updated Skills and MCP definitions are reloaded. Set the required environment variables on that computer before using GitHub, GitLab, Shortcut, Google Drive, or NotebookLM.
 
 ## Security
 
