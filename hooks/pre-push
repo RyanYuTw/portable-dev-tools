@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# 推送前 review 閘門 — 適用於任何 agent（Codex、Claude Code）或純終端機 git。
+# 放行條件：.claude/state/reviewed 內含目前 HEAD 的完整 SHA。
+set -uo pipefail
+
+root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
+sha=$(git rev-parse HEAD 2>/dev/null) || exit 0
+marker="$root/.claude/state/reviewed"
+
+if [ -f "$marker" ] && grep -qxF "$sha" "$marker"; then
+  exit 0
+fi
+
+cat >&2 <<MSG
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  推送已被擋下：HEAD (${sha:0:7}) 尚未經過 review
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+請先詢問使用者要執行哪一項，不要自行決定：
+
+  1. code review      — 正確性、重複、簡化
+  2. security review  — 安全性
+  3. 兩者都跑
+  4. 略過本次
+
+Codex：codex review --uncommitted
+Claude Code：/code-review 或 /security-review
+
+跑完（或使用者選擇略過）後執行：
+
+  mkdir -p "$root/.claude/state"
+  echo $sha >> "$marker"
+
+然後重新推送。
+
+MSG
+exit 1

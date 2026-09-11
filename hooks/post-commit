@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# 提交後的 Jira 連動提示 — 適用於任何 agent 或純終端機 git。
+# 本身不呼叫 Jira，只把該做的事印到 stderr，由驅動的 agent 執行。
+set -uo pipefail
+
+CLOUD_ID="705c06fa-40ad-4dde-b2ac-35a2fe5f72b6"
+
+subject=$(git log -1 --pretty=%s 2>/dev/null) || exit 0
+body=$(git log -1 --pretty=%B 2>/dev/null) || exit 0
+sha=$(git rev-parse --short HEAD 2>/dev/null) || exit 0
+
+keys=$(printf '%s' "$body" | grep -oE '\b[A-Z][A-Z0-9]+-[0-9]+\b' | awk '!seen[$0]++' | paste -sd', ' -)
+
+if [ -z "$keys" ]; then
+  cat >&2 <<MSG
+
+[Jira] commit $sha「$subject」沒有引用任何票號。
+GitLab 整合因此不會掛上連結，這筆紀錄不會被追蹤。
+若非有意為之，可用 git commit --amend 補上票號。
+
+MSG
+  exit 0
+fi
+
+ctype=$(printf '%s' "$subject" | sed -E 's/^([a-zA-Z]+).*/\1/' | tr '[:upper:]' '[:lower:]')
+case "$ctype" in
+  feat) cat_id="10053"; cat_name="功能新增 Feature" ;;
+  fix)  cat_id="10054"; cat_name="錯誤 Bug" ;;
+  *)    cat_id="10055"; cat_name="雜項 Chore" ;;
+esac
+
+cat >&2 <<MSG
+
+[Jira] commit $sha「$subject」引用了 $keys
+請用 Atlassian MCP（cloudId $CLOUD_ID）依序處理：
+
+  1. 讀取每張票狀態。若為「待辦事項」或「計畫階段」，
+     用 transition id 2 轉為「進行中」。
+  2. 若本次內容已完成某張票或其子任務，**先詢問使用者**；
+     得到同意才用 transition id 41。未經同意不要轉成完成。
+  3. 僅限新開的票：類別 customfield_10046 依 commit type「$ctype」
+     對應 $cat_id（$cat_name）。既有票不回填。
+  4. Web 連結由 GitLab 整合自動掛上，不需手動建立，也不要發留言。
+
+MSG
+exit 0
