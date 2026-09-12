@@ -46,7 +46,7 @@ Data and integrations
 
 - Node.js 18 or newer and `npx` for Playwright and GitLab MCP.
 - `uv`/`uvx` for Fetch MCP.
-- The `notebooklm-mcp` CLI on `PATH` for NotebookLM MCP (`uv tool install notebooklm-mcp-cli`), authenticated with `nlm login`.
+- `uv`/`uvx` also covers NotebookLM MCP — it runs as `uvx --from notebooklm-mcp-cli notebooklm-mcp`, so nothing has to be on `PATH`. It does need a one-time interactive sign-in: `uv tool install notebooklm-mcp-cli && nlm login` (or `uvx --from notebooklm-mcp-cli nlm login`). Without it every call fails with `Profile 'default' not found`.
 - Python 3.10 or newer for the skills that ship scripts (`crawl4ai`, `gdrive-crud`, `html-slide-builder`).
 - A GitHub fine-grained personal access token in `GITHUB_PERSONAL_ACCESS_TOKEN`.
 - A GitLab personal access token for `gitlab.dbodm.com` in `GITLAB_PERSONAL_ACCESS_TOKEN` (this instance has no native MCP endpoint, so GitLab MCP runs via `@zereight/mcp-gitlab` with a PAT instead of OAuth).

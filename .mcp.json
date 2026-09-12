@@ -40,8 +40,12 @@
       ]
     },
     "notebooklm": {
-      "command": "notebooklm-mcp",
-      "args": []
+      "command": "uvx",
+      "args": [
+        "--from",
+        "notebooklm-mcp-cli",
+        "notebooklm-mcp"
+      ]
     }
   }
 }
