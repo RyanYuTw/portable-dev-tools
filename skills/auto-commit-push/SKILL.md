@@ -1,6 +1,6 @@
 ---
 name: auto-commit-push
-description: Analyze the git diff, produce a Conventional Commits message, safely stage only relevant files (never .env/credentials, never `git add -A`/`git add .`), commit, and push to the current branch. Use when the user asks to commit, auto-commit, "commit and push", or any request to automate the git commit/push flow, even if they don't say "conventional commits" or "push" explicitly. Built-in guardrails: detects sensitive files, detects main/master, detects a diverged/behind branch — stops and asks the user in those cases instead of acting blindly.
+description: Analyze the git diff, produce a Conventional Commits message, safely stage only relevant files (never .env/credentials, never `git add -A`/`git add .`), commit, and push to the current branch. Use when the user asks to commit, auto-commit, "commit and push", or any request to automate the git commit/push flow, even if they don't say "conventional commits" or "push" explicitly. Built-in guardrails: asks whether to show the staged diff before committing, detects sensitive files, detects main/master, detects a diverged/behind branch — stops and asks the user in those cases instead of acting blindly.
 ---
 
 # Auto Commit & Push
@@ -58,7 +58,24 @@ false-flagged.
   the commit didn't proceed.
 - Never bypass this with `--no-verify` or by ignoring the warning.
 
-### 4. Write a Conventional Commits message
+### 4. Offer the diff before committing
+
+After the secret scan passes, before running `git commit`, ask the user once:
+
+> 要先看 staged 的 git diff 嗎？（y = 顯示，Enter/n = 直接 commit）
+
+- Default is **not** to show it — if the user says no, is silent, or the
+  session is non-interactive, go straight to the commit.
+- If the user says yes, show `git diff --staged` (start with
+  `git diff --staged --stat` and follow with the full diff if the change is
+  large), let them react, then commit.
+- Ask only once per commit, and never skip the question just because the
+  change looks small.
+- This is a review checkpoint, not a permission gate: the user asking for the
+  diff doesn't mean the commit is cancelled — wait for their reaction, then
+  proceed unless they say to stop or change something.
+
+### 5. Write a Conventional Commits message
 
 Infer the type (`feat` / `fix` / `refactor` / `style` / `docs` / `test` /
 `chore` / `perf` / ...) from the staged diff, write one concise imperative
@@ -91,7 +108,7 @@ If a pre-commit hook fails: the commit did not actually happen, so fix the
 issue, re-`git add`, and create a **new** commit — don't `--amend` a commit
 that doesn't exist.
 
-### 5. Pre-push safety check
+### 6. Pre-push safety check
 
 After committing:
 
@@ -119,7 +136,7 @@ For the normal case (not main/master, not diverged) there's no need to ask
 before pushing — "automate this" is the whole point; only the two risk cases
 above warrant stopping.
 
-### 6. Verify
+### 7. Verify
 
 ```bash
 git status
@@ -127,7 +144,7 @@ git status
 
 Confirm the working tree is clean and the push succeeded.
 
-### 7. Report
+### 8. Report
 
 Keep it brief: short commit hash, first line of the commit message, push
 result. No need to narrate every step taken.

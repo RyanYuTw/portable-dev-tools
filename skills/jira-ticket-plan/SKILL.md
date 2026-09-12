@@ -63,4 +63,5 @@ description 裡通常已有「背景／既有後端佐證／驗收標準／驗�
 - 狀態轉移交給 commit hook 處理，**不要**在此手動轉票。提交後 hook 會提示把「待辦事項／計畫階段」轉「進行中」（transition id 2），並**一併檢查父任務**——只要任一子任務是「進行中」或「完成」，父任務就不該停在「待辦事項」。hook 由 `scripts/install-git-hooks.sh` 安裝到 `.git/hooks/post-commit`，對 Codex、Claude Code 與純終端機 git 一律生效
 - 子任務標記完成一律需要使用者同意，不可自行判定
 - commit 訊息必須含票號（`KNDU-228` 大寫、有連字號），否則 GitLab 不會回寫 Jira
+- **commit 之前先問一句「要先看 git diff 嗎？」**。預設不顯示：使用者說不用、沒回應或非互動情境就直接 commit；說要看才輸出 `git diff --staged`（改動大時先給 `--stat` 摘要再給全文），等使用者反應後再 commit。每次 commit 只問一次，改動再小也要問。這是複查點不是許可閘門，使用者看完沒有要求修改就照原計畫 commit
 - 推送前會被 review 閘門攔下，那是預期行為。跑完 review 或使用者選擇略過後，把 HEAD 的完整 SHA 寫入 `.claude/state/reviewed` 即放行
