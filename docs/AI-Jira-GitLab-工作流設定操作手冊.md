@@ -99,7 +99,7 @@ Token 產生後只會完整顯示一次，請立即複製並保存；離開頁�
 
 推薦順序如下：
 
-1. macOS Keychain、公司核准的密碼管理工具或其他作業系統 Secret Manager。
+1. 作業系統的 Secret Manager（macOS 見 3.2.3.1、Windows 見 3.2.3.2）或公司核准的密碼管理工具。
 2. 啟動 Codex、Claude Code 前，由 Keychain 注入環境變數 `GITLAB_PERSONAL_ACCESS_TOKEN`。
 3. 僅限本機測試的 `.env` 或 shell 設定檔；該檔案不可提交到 Git。
 
@@ -154,6 +154,76 @@ claude --plugin-dir /Users/ryanai/plugins/portable-dev-tools
 
 若使用 Codex，則在啟動 Codex 的 Terminal 設定同一個變數；不要把真實 Token 寫進 `.mcp.json`、README.md、SKILL.md、Jira description、commit message、Git history 或截圖。也避免直接把真實 Token 打在會被 shell history 保存的指令中，正式環境應改用 Secret Manager 或互動式安全注入。
 
+#### 3.2.3.2 寫入 Windows Secret Store（推薦）
+
+Windows 沒有 Keychain，對應做法有兩種，擇一即可。兩者都只有**你這個 Windows 帳號**解得開，設定檔裡留下的也只是「去哪裡拿」，不是 Token 本身。
+
+**方式 A：PowerShell SecretManagement（等價於 Keychain）**
+
+只需要安裝一次：
+
+~~~powershell
+Install-Module Microsoft.PowerShell.SecretManagement,
+  Microsoft.PowerShell.SecretStore -Scope CurrentUser
+
+Register-SecretVault -Name LocalStore `
+  -ModuleName Microsoft.PowerShell.SecretStore -DefaultVault
+~~~
+
+存入 Token。使用 `Read-Host -AsSecureString` 互動式輸入，Token 不會留在 PowerShell history：
+
+~~~powershell
+Set-Secret -Name GITLAB_PERSONAL_ACCESS_TOKEN `
+  -Secret (Read-Host -AsSecureString)
+~~~
+
+取用。把這兩行放進 PowerShell profile，路徑用 `$PROFILE` 查：
+
+~~~powershell
+$env:GITLAB_PERSONAL_ACCESS_TOKEN =
+  Get-Secret -Name GITLAB_PERSONAL_ACCESS_TOKEN -AsPlainText
+~~~
+
+其他金鑰換一個 `-Name` 即可，例如 `JIRA_API_TOKEN`；不要在同一個名稱下混放不同用途的密鑰。
+
+**方式 B：DPAPI 加密檔（不需安裝模組）**
+
+`ConvertFrom-SecureString` 使用 Windows 內建的 DPAPI 加密，結果只有同一個帳號在同一台機器解得開，複製到別台機器無效：
+
+~~~powershell
+Read-Host -AsSecureString |
+  ConvertFrom-SecureString |
+  Set-Content "$env:USERPROFILE\.gitlab-pat"
+~~~
+
+取用（同樣放進 `$PROFILE`）：
+
+~~~powershell
+$sec = Get-Content "$env:USERPROFILE\.gitlab-pat" |
+  ConvertTo-SecureString
+$env:GITLAB_PERSONAL_ACCESS_TOKEN =
+  [Net.NetworkCredential]::new("", $sec).Password
+~~~
+
+**最後手段：明文使用者環境變數（僅限本機測試）**
+
+對應 3.2.3 優先順序的第 3 項。它把 Token 明文寫進登錄檔 `HKCU\Environment`，任何以你身分執行的程式都讀得到，所以到期日不要設長，scope 只勾 `read_api`：
+
+~~~powershell
+[Environment]::SetEnvironmentVariable(
+  "GITLAB_PERSONAL_ACCESS_TOKEN",
+  "glpat-...",
+  "User")
+~~~
+
+第三個參數 `"User"` 只影響你這個帳號。不要用 `"Machine"`，那會套用到整台機器並需要系統管理員權限。圖形介面等價做法：按 `Win` + `R` 輸入 `sysdm.cpl` → 「進階」→「環境變數」→ **上半部**的「使用者變數」→「新增」，三層視窗都要按「確定」。cmd 的 `setx` 也可以，但目前這個視窗讀不到，要另開新視窗。
+
+**三個 Windows 專屬注意事項**
+
+1. **已開著的程式讀不到新值。** 環境變數是行程啟動時繼承的。Cursor、VS Code、終端機都要完全關閉再開；從開始功能表啟動的 GUI 程式有時要登出再登入。這是「明明設好了卻一直 401」最常見的原因。
+2. **Git Bash 自成一國。** 它讀 `~/.bashrc`，不讀 PowerShell profile；從 GUI 啟動的 Codex、Cursor 讀的是使用者環境變數，也不讀 Git Bash 的設定。三者要分開設。
+3. **WSL 不繼承 Windows 端的設定。** 在 WSL 內執行時，照 3.2.3 的優先順序設在 WSL 自己的環境（`secret-tool` 或 `~/.bashrc`）。
+
 #### 3.2.4 測試 Token 是否可用
 
 設定環境變數並重啟工具後，先用 GitLab MCP 執行 `whoami`，再讀取 `laravel/ims` 專案。若用命令列測試，可使用下列只讀 API 請求：
@@ -163,6 +233,16 @@ curl --fail --silent --show-error \
   --header "PRIVATE-TOKEN: ${GITLAB_PERSONAL_ACCESS_TOKEN}" \
   "https://gitlab.dbodm.com/api/v4/projects/laravel%2Fims"
 ~~~
+
+Windows（PowerShell）：
+
+~~~powershell
+curl.exe --fail --silent --show-error `
+  --header "PRIVATE-TOKEN: $env:GITLAB_PERSONAL_ACCESS_TOKEN" `
+  "https://gitlab.dbodm.com/api/v4/projects/laravel%2Fims"
+~~~
+
+PowerShell 裡的 `curl` 是 `Invoke-WebRequest` 的別名、參數完全不同，一定要打 `curl.exe`（Windows 10 1803 以後內建）；行尾的反引號是 PowerShell 的換行符號，不是 bash 的反斜線。若只想確認變數是否載入而不顯示 Token，可用 `$env:GITLAB_PERSONAL_ACCESS_TOKEN.Length`。
 
 `401 Unauthorized` 通常表示 Token 未載入、已過期或無效；`404 Not Found` 可能表示專案路徑錯誤，或 Token 所屬帳號沒有該專案的存取權。測試輸出不要貼到公開頻道。
 
