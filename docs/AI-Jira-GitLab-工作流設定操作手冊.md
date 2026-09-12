@@ -251,7 +251,7 @@ mcp__atlassian__getJiraProjectIssueTypesMetadata
     },
     "atlassian": {
       "type": "http",
-      "url": "https://mcp.atlassian.com/v1/mcp"
+      "url": "https://mcp.atlassian.com/v2/mcp"
     }
   }
 }
