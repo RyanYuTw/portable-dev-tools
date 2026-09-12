@@ -12,23 +12,6 @@ branch, sensitive files).
 
 ## Full flow
 
-### 0. (Optional) Shortcut token health check
-
-Only needed if this branch/task will use the Shortcut integration (e.g. the
-branch name contains `sc-XXXXX`, or the user wants ticket status synced).
-Skip entirely for commits unrelated to Shortcut.
-
-```bash
-bash ~/.codex/skills/shortcut-token-renew/scripts/check_shortcut_token.sh
-```
-
-- exit 0: skip, go to step 1.
-- exit 1 (expired): follow
-  [shortcut-token-renew](../shortcut-token-renew/SKILL.md) to renew, then
-  come back and continue.
-- exit 2 (never configured): ignore if unrelated to this task, continue to
-  step 1.
-
 ### 1. Gather current state (can run in parallel)
 
 ```bash
@@ -37,14 +20,6 @@ git diff              # unstaged
 git diff --staged     # staged but not committed
 git log --oneline -10 # match this repo's recent commit style
 ```
-
-**If the current branch name encodes a Shortcut ticket** (e.g. `sc-49` in
-`ryan.yu/sc-49/misc`), the commit subject needs a `[sc-49]` prefix — this is
-the exact format the GitLab↔Shortcut integration scans commit messages for
-to auto-link a commit into the story's "Commits" list (verified against
-this workspace: only commits with a `[sc-NN]` prefix showed up there, ones
-without it did not, even on a correctly-named branch). Branches unrelated to
-a ticket keep plain Conventional Commits with no prefix.
 
 **Jira/GitLab traceability (only when the current task is Jira-tracked):**
 
@@ -103,15 +78,12 @@ Use a heredoc so formatting is preserved:
 
 ```bash
 git commit -m "$(cat <<'EOF'
-[sc-49] <type>: <subject>
+<type>: <subject>
 
 Co-Authored-By: Codex <noreply@openai.com>
 EOF
 )"
 ```
-
-(Only add the `[sc-49]`-style prefix when the branch is tied to that ticket
-— see step 1. Otherwise it's just `<type>: <subject>`.)
 
 Never add `--no-verify`, `--no-gpg-sign`, or `-c commit.gpgsign=false`.
 
@@ -155,29 +127,7 @@ git status
 
 Confirm the working tree is clean and the push succeeded.
 
-### 7. (If the branch is tied to a Shortcut ticket) confirm it landed in Commits / Merge Requests
-
-The GitLab↔Shortcut integration is a passive scanner, not something you
-write into via a comment or API call:
-
-- **Merge Requests**: any MR whose source branch name contains `sc-XXXXX`
-  gets auto-linked into the story's "Merge Requests" list regardless of MR
-  title — this happens automatically once the branch is pushed and an MR is
-  opened, no extra action needed.
-- **Commits**: the integration only recognizes the `[sc-49]`-style prefix
-  *in the commit message* (see step 1/4) — branch name alone doesn't link
-  individual commits. If step 4 added the prefix correctly, the push already
-  gets the commit linked into the story's "Commits" list automatically.
-- **Do not** post a manual comment listing commits as a substitute — a
-  comment is not the same as a real entry in the Commits/Merge Requests
-  section and doesn't count as integration.
-- To confirm it actually landed, query the story (e.g. via the Shortcut API
-  or MCP tool with full detail) and check its `commits` / `pull_requests`
-  fields for this push's hash/MR. A commit already pushed without the
-  prefix won't get backfilled by the integration — either accept that, or
-  push a follow-up commit with the correct prefix.
-
-### 8. Report
+### 7. Report
 
 Keep it brief: short commit hash, first line of the commit message, push
 result. No need to narrate every step taken.

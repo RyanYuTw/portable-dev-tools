@@ -1,4 +1,0 @@
-interface:
-  display_name: "Shortcut Token Renewal"
-  short_description: "檢查/重新申請過期的 Shortcut API token 並同步設定檔"
-  default_prompt: "Use $shortcut-token-renew to check whether SHORTCUT_API_TOKEN is expired and, if so, renew it and sync the new value into local config files."

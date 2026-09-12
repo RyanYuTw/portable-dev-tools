@@ -8,18 +8,11 @@ Portable Agent Plugins 1.0 bundle for Claude Code and Codex.
 
 Response and workflow
 
-- `caveman`: concise response modes.
 - `open-vscode`: opens files or projects in VS Code.
 
 Git and issue tracking
 
 - `auto-commit-push`: analyzes changes, writes a Conventional Commits message, stages safely, commits, and pushes.
-- `git-commit-sc`: commit helper for Shortcut-referenced work.
-- `shortcut-commit-sync`: links commits to Shortcut tickets when an integration is available.
-- `shortcut-api`: queries Shortcut story details through the REST API.
-- `shortcut-ticket`: fetches and displays a Shortcut ticket by ID or URL.
-- `shortcut-token-renew`: checks and renews an expired `SHORTCUT_API_TOKEN` across local config files.
-- `shortcut-meeting-minutes`: generates meeting minutes from Shortcut data and exports them to DOCX.
 - `task-to-jira`: analyzes a feature, splits unfinished implementation into verifiable tasks, and synchronizes confirmed work to Jira.
 - `weekly-jira-report`: generates a read-only weekly report with per-ticket execution evidence and child-task completion progress.
 - `jira-breakdown`: splits a requirement into Jira tasks and sub-tasks, fills start/due dates, priority, category and labels, and asks who to assign before writing.
@@ -46,19 +39,17 @@ Data and integrations
 - GitHub MCP: repositories, issues, pull requests, and Actions.
 - GitLab MCP: projects, issues, merge requests, pipelines, and APIs on `gitlab.dbodm.com`.
 - Atlassian Rovo MCP: Jira Cloud, Confluence, and Compass.
-- Shortcut MCP: stories, epics, iterations, and workflows.
 - Fetch MCP: retrieves and converts web pages for the model.
 - NotebookLM MCP: source-grounded answers from NotebookLM notebooks.
 
 ## Requirements
 
-- Node.js 18 or newer and `npx` for Playwright, GitLab, and Shortcut MCP.
+- Node.js 18 or newer and `npx` for Playwright and GitLab MCP.
 - `uv`/`uvx` for Fetch MCP.
 - The `notebooklm-mcp` CLI on `PATH` for NotebookLM MCP (`uv tool install notebooklm-mcp-cli`), authenticated with `nlm login`.
-- Python 3.10 or newer for the skills that ship scripts (`crawl4ai`, `gdrive-crud`, `html-slide-builder`, `shortcut-meeting-minutes`).
+- Python 3.10 or newer for the skills that ship scripts (`crawl4ai`, `gdrive-crud`, `html-slide-builder`).
 - A GitHub fine-grained personal access token in `GITHUB_PERSONAL_ACCESS_TOKEN`.
 - A GitLab personal access token for `gitlab.dbodm.com` in `GITLAB_PERSONAL_ACCESS_TOKEN` (this instance has no native MCP endpoint, so GitLab MCP runs via `@zereight/mcp-gitlab` with a PAT instead of OAuth).
-- A Shortcut API token in `SHORTCUT_API_TOKEN`.
 - `GDRIVE_SA_KEY_PATH` pointing at a Google service account key file for `gdrive-crud`.
 - Network access to Context7, GitHub, and GitLab MCP endpoints.
 - Browser access for Atlassian OAuth authorization.
@@ -143,7 +134,7 @@ This repository is the portable synchronization boundary between Codex and Claud
 
 - Shared Skills live under `skills/` and are loaded by both plugin runtimes.
 - Shared MCP servers live in `.mcp.json` and use environment variables or OAuth, not machine-specific secrets.
-- The current shared MCP set includes Context7, Playwright, GitHub, GitLab, Atlassian, Shortcut, Fetch, and NotebookLM.
+- The current shared MCP set includes Context7, Playwright, GitHub, GitLab, Atlassian, Fetch, and NotebookLM.
 - Codex-only runtime services such as `node_repl`, computer-use backends, and absolute application paths stay in Codex local configuration and are not copied into Claude Code.
 
 To use the synchronized bundle in Claude Code:
@@ -152,7 +143,7 @@ To use the synchronized bundle in Claude Code:
 claude --plugin-dir /path/to/portable-dev-tools
 ~~~
 
-After pulling a newer version, start a new Claude Code session so the updated Skills and MCP definitions are reloaded. Set the required environment variables on that computer before using GitHub, GitLab, Shortcut, Google Drive, or NotebookLM.
+After pulling a newer version, start a new Claude Code session so the updated Skills and MCP definitions are reloaded. Set the required environment variables on that computer before using GitHub, GitLab, Google Drive, or NotebookLM.
 
 ## Security
 
