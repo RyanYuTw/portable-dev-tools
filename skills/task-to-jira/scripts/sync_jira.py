@@ -7,6 +7,7 @@ import argparse
 import base64
 import json
 import os
+import subprocess
 import sys
 import urllib.error
 import urllib.parse
@@ -15,7 +16,6 @@ from pathlib import Path
 from typing import Any
 
 
-AUTO_LABEL = "自動建立"
 DEFAULT_BASE_URL = "https://dboem.atlassian.net"
 DEFAULT_PROJECT_KEY = "KNDU"
 DEFAULT_ASSIGNEE_EMAIL = "ryan.yu@dboem.com"
@@ -98,12 +98,15 @@ class JiraClient:
             raise RuntimeError(f"expected exactly one Jira user for '{email}', found {len(matches)}")
         return matches[0]["accountId"]
 
-    def existing(self, project_key: str) -> dict[str, dict[str, Any]]:
+    def existing(self, project_key: str, repo_label: str | None) -> dict[str, dict[str, Any]]:
+        jql = f'project = "{project_key}"'
+        if repo_label:
+            jql += f' AND labels = "{repo_label}"'
         result = self.request(
             "POST",
             "/rest/api/3/search/jql",
             {
-                "jql": f'project = "{project_key}" AND labels = "{AUTO_LABEL}"',
+                "jql": jql,
                 "maxResults": 100,
                 "fields": ["summary", "status", "labels"],
             },
@@ -117,7 +120,7 @@ class JiraClient:
         task: dict[str, Any],
         assignee_account_id: str | None,
     ) -> dict[str, Any]:
-        labels = list(dict.fromkeys([*task.get("labels", []), AUTO_LABEL]))
+        labels = list(dict.fromkeys(task.get("labels", [])))
         fields: dict[str, Any] = {
             "project": {"key": project_key},
             "issuetype": {"name": issue_type},
@@ -137,12 +140,31 @@ class JiraClient:
         return self.request("POST", "/rest/api/3/issue", {"fields": fields})
 
 
+def detect_repo_label() -> str | None:
+    """Repository name used as a label, from the origin remote or the repo root."""
+    for command in (["git", "remote", "get-url", "origin"], ["git", "rev-parse", "--show-toplevel"]):
+        try:
+            output = subprocess.run(
+                command, capture_output=True, text=True, check=True
+            ).stdout.strip()
+        except (OSError, subprocess.CalledProcessError):
+            continue
+        if output:
+            return Path(output.removesuffix(".git")).name
+    return None
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--plan", required=True, type=Path)
     parser.add_argument("--project")
     parser.add_argument("--issue-type")
     parser.add_argument("--assignee", help="assignee email; overrides JIRA_ASSIGNEE_EMAIL")
+    parser.add_argument(
+        "--repo-label",
+        help="repository label used to scope the duplicate search; "
+        "defaults to the current git repository name",
+    )
     parser.add_argument("--env-file", type=Path, default=Path(".env"))
     parser.add_argument("--apply", action="store_true", help="create missing issues")
     args = parser.parse_args()
@@ -164,7 +186,7 @@ def main() -> int:
         return 0
 
     client = JiraClient()
-    existing = client.existing(project_key)
+    existing = client.existing(project_key, args.repo_label or detect_repo_label())
     assignee_account_ids: dict[str, str] = {}
     created = 0
     skipped = 0

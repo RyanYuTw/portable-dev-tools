@@ -22,15 +22,17 @@ The plan is a JSON array. Each item requires `summary` and `description`; `label
 ```json
 [
   {
-    "summary": "[帳號管理] 完成停用帳號流程",
+    "summary": "[ims] 帳號停用流程可由後台送出並寫回狀態",
     "description": "背景、證據、驗收條件、測試方式與完成定義",
-    "labels": ["帳號管理", "後端"],
+    "labels": ["ims", "帳號停用", "後端"],
     "assignee": "ryan.yu@dboem.com"
   }
 ]
 ```
 
-The helper always adds `自動建立` and removes duplicate labels.
+The helper writes the plan's labels as-is, only removing duplicates; it no longer
+injects an `自動建立` label. The duplicate search is scoped by the repository label,
+taken from `--repo-label` or the current git repository name.
 
 ## Safety and endpoints
 

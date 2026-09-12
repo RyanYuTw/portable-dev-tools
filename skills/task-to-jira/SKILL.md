@@ -22,15 +22,32 @@ Classify each capability as:
 
 Create Jira drafts only for unfinished or unproven work. Report completed capabilities in the progress summary without duplicating them as new issues.
 
+## Repository and feature naming
+
+Every draft is named after the repository it lands in and the feature it implements:
+
+- `{repo-name}`: `basename -s .git "$(git remote get-url origin)"`, falling back to
+  `basename "$(git rev-parse --show-toplevel)"` when there is no remote. Keep the
+  original spelling (`ims`, `aims-front`); do not translate or re-case it.
+- `{function-name}`: the feature boundary of this batch, in Traditional Chinese and
+  **without spaces**, because Jira labels reject them (`案件合併`, not `案件 合併`).
+
 ## Split work
 
 Split by independently deliverable behavior, not by arbitrary file or technical layer. A task may span UI, API, persistence, permissions, and tests when those pieces are required for one verifiable outcome. Separate tasks when they can be implemented and accepted independently.
 
 Every draft must contain:
 
-1. `summary`: `[功能名稱] 動詞＋可交付結果` in Traditional Chinese unless the user requests another language.
+1. `summary`: `[{repo-name}] 動詞＋可交付結果`, with the feature folded into the title
+   itself rather than kept in a separate bracket — for example
+   `[ims] 案件合併加上授權檢查並回傳 403`. Traditional Chinese unless the user requests
+   another language. The bracket holds the repository name only.
 2. `description`: background, repository evidence, relevant contracts or permissions, acceptance criteria, verification, and definition of done.
-3. `labels`: Traditional Chinese feature label plus `自動建立`; add another concise Traditional Chinese category label only when useful. Do not add English synonyms.
+3. `labels`: `{repo-name}`, `{function-name}`, plus 1-3 more labels for what this
+   ticket actually touches (`前端`, `後端`, `API`, `資料庫`, `權限`, `測試`, `文件`,
+   `設定`). Traditional Chinese except the repo name, no spaces in any label, no
+   English synonyms, and nothing invented that the ticket does not touch. Do not add
+   an `自動建立` label.
 4. `status`: recommended local status using `待執行`, `執行中`, `驗收中`, or `已完成`.
 5. `verification`: exact test command or observable check when known.
 6. `assignee`: default to `ryan.yu@dboem.com` unless the user names a different assignee for that task.
@@ -69,7 +86,7 @@ Default target unless the user specifies otherwise:
 - Assignee: `ryan.yu@dboem.com`
 
 1. Confirm the Jira site, project key, issue type, target labels, and workflow status names from the environment or Jira metadata, falling back to the defaults above. Do not guess any identifier the defaults don't cover.
-2. Search the target project and compare the full summary before creating anything. Include the feature label and `自動建立` in the search where useful, but do not rely on sequence numbers or creation time for deduplication.
+2. Search the target project and compare the full summary before creating anything. Narrow the search with the `{repo-name}` and `{function-name}` labels or the `[{repo-name}]` summary prefix, but do not rely on labels alone, nor on sequence numbers or creation time, for deduplication.
 3. Present the exact create/update preview. Immediately before the external write, obtain user confirmation listing issue count, summaries, project, issue type, intended status, and assignee.
 4. Create or update only the confirmed issues, setting `assignee` on each (resolve the email to an account ID first; see [references/rest-api.md](references/rest-api.md)). Match workflow transitions by exact returned name; never guess transition IDs.
 5. Read every affected issue back from Jira and report its key, URL, status, labels, and assignee.

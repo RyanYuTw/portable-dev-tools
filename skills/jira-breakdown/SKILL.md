@@ -9,6 +9,8 @@ description: 依需求自動拆解為 Jira 任務與子任務，估算日期與�
 
 先執行 `portable-dev-tools:task-to-jira` 取得它的分析與拆解規則（feature boundary、狀態分類、summary/description 格式、預覽關卡），本檔只補上該 skill 未涵蓋的欄位自動化與階層限制。
 
+summary 一律是 `[{repo-name}] 動詞＋可交付結果`，功能名稱寫進標題本身而不是另開一個中括號（例：`[ims] 案件合併加上授權檢查並回傳 403`）；`{repo-name}`、`{function-name}` 的取法見 task-to-jira 的 Repository and feature naming。
+
 ## 目標環境（已驗證，勿再查詢）
 
 - cloudId `705c06fa-40ad-4dde-b2ac-35a2fe5f72b6`，專案 `KNDU`（研發部）
@@ -33,7 +35,7 @@ description: 依需求自動拆解為 Jira 任務與子任務，估算日期與�
 | 開始日期 | `customfield_10015` | 依相依順序排程，第一項為今天 |
 | 截止日期 | `duedate` | 開始日期 + 難度天數 |
 | 類別 | `customfield_10046` | 新增功能→`10053`（功能開發 Feature）；修 bug→`10054`（錯誤修訂 Bug）；其餘（重構、測試、文件、設定）→`10055`（雜項任務 Chore） |
-| 標籤 | `labels` | 功能領域標籤（正體中文）+ `自動建立` |
+| 標籤 | `labels` | `{repo-name}` + `{function-name}` + 1～3 個實際觸及面向（`前端`／`後端`／`API`／`資料庫`／`權限`／`測試`／`文件`／`設定`）。標籤不得含空白，**不要**加 `自動建立` |
 | 受託人 | `assignee` | 見下方詢問流程 |
 
 難度對應天數：單一檔案的小改動 1 天；跨 UI／API／持久層的一般功能 3 天；牽涉權限、資料遷移或外部整合 5 天。排程時**跳過週六日**。

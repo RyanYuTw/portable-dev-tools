@@ -383,7 +383,7 @@ AI 不應只依需求標題猜測。應沿著實際 runtime path 盤點：
 ### 6.4 每個 Jira draft 必須包含
 
 ~~~yaml
-summary: "[案件管理] 新增案件合併 API 與授權驗證"
+summary: "[ims] 新增案件合併 API 與授權驗證"
 description:
   background: "為避免重複案件，需要讓授權使用者將兩筆案件合併。"
   repository_evidence:
@@ -400,7 +400,7 @@ description:
   definition_of_done:
     - "程式碼完成並通過測試"
     - "MR 描述包含 KNDU-123"
-labels: ["案件管理", "自動建立", "後端"]
+labels: ["ims", "案件合併", "後端"]
 local_status: "待執行"
 assignee_recommendation: "依 owners.yml 或 CODEOWNERS 推薦"
 priority_recommendation: "High"
@@ -473,11 +473,11 @@ Issue type：Task（已由 metadata 驗證）
 預計建立：4 項；更新既有：0 項
 進度：已完成 1；執行中 1；待執行 4；阻塞 0
 
-1. [案件管理] 建立案件合併 API 與授權
+1. [ims] 建立案件合併 API 與授權
    assignee：後端主要維護者（信心：中）
    priority：High
    original estimate：6h
-   labels：案件管理、自動建立、後端
+   labels：ims、案件合併、後端
    status：待執行
    驗收：授權、403、自己合併、重複操作
    verification：php artisan test --filter=CaseMerge
@@ -508,13 +508,13 @@ Issue type：Task（已由 metadata 驗證）
     "cloudId": "已驗證的 cloudId",
     "projectKey": "KNDU",
     "issueTypeName": "Task",
-    "summary": "[案件管理] 建立案件合併 API 與授權",
+    "summary": "[ims] 建立案件合併 API 與授權",
     "description": "背景、repository evidence、acceptance criteria、verification、definition of done",
     "assignee_account_id": "由 Jira lookup 查回的 account ID",
     "contentFormat": "markdown",
     "additional_fields": {
       "priority": {"name": "High"},
-      "labels": ["案件管理", "自動建立", "後端"]
+      "labels": ["ims", "案件合併", "後端"]
     }
   }
 }
@@ -532,7 +532,7 @@ Issue type：Task（已由 metadata 驗證）
     "projectKey": "KNDU",
     "issueTypeName": "Sub-task",
     "parent": "KNDU-123",
-    "summary": "[案件管理] 補齊案件合併的權限與重複操作測試",
+    "summary": "[ims] 補齊案件合併的權限與重複操作測試",
     "description": "驗收條件與測試命令",
     "contentFormat": "markdown"
   }
@@ -703,10 +703,10 @@ php artisan test --filter=CaseMerge
 任務：4 項；已完成 0；進行中 1；待執行 3；阻塞 0
 進度：0/4（尚無驗收完成項）
 
-- [案件管理] 建立案件合併 API 與授權（High，6h，後端，待執行）
-- [案件管理] 儲存案件合併關係並限制重複（High，4h，後端，待執行）
-- [案件管理] 加入前端合併確認流程（Medium，6h，前端，待執行）
-- [案件管理] 補齊成功與失敗路徑測試（High，4h，QA/後端，執行中）
+- [ims] 建立案件合併 API 與授權（High，6h，後端，待執行）
+- [ims] 儲存案件合併關係並限制重複（High，4h，後端，待執行）
+- [ims] 加入前端合併確認流程（Medium，6h，前端，待執行）
+- [ims] 補齊成功與失敗路徑測試（High，4h，QA/後端，執行中）
 ~~~
 
 ### 11.3 使用者確認後
@@ -790,9 +790,9 @@ Create Jira drafts only for unfinished or unproven work.
 
 Split by independently deliverable behavior, not arbitrary files or technical layers. Every draft must include:
 
-1. summary: [功能名稱] 動詞＋可交付結果.
+1. summary: [{repo-name}] 動詞＋可交付結果，功能名稱寫進標題本身，不另開中括號。
 2. description: background, repository evidence, contracts/permissions, acceptance criteria, verification, and definition of done.
-3. labels: a Traditional Chinese feature label plus 自動建立; add a useful category only when needed.
+3. labels: {repo-name} plus {function-name} plus 1-3 labels for what the ticket touches; no spaces, no 自動建立.
 4. local status: 待執行, 執行中, 驗收中, or 已完成.
 5. exact test command or observable verification when known.
 
@@ -1070,7 +1070,7 @@ reports/weekly/KNDU-YYYY-MM-DD.md
 ~~~json
 [
   {
-    "summary": "[案件管理] 建立案件合併 API 與授權",
+    "summary": "[ims] 建立案件合併 API 與授權",
     "description": "背景：避免重複案件。\n\nRepository evidence：routes/api.php、app/Services/CaseFollowupService.php。\n\nAcceptance criteria：授權角色可合併；非授權角色得到 403；同一案件不可自我合併；重複操作不產生第二筆關係。\n\nVerification：php artisan test --filter=CaseMerge。\n\nAI 建議：assignee=待以 Jira account lookup 驗證；priority=High；estimate=6h。",
     "labels": ["案件管理", "後端"]
   }
@@ -1112,7 +1112,7 @@ export JIRA_ISSUE_TYPE='Task'
 ### 建立重複 ticket
 
 - 先用完整 summary 搜尋，不要依建立時間或流水號去重複。
-- 用 feature label 加 自動建立 輔助搜尋，但不能只依 labels 判斷。
+- 用 {repo-name}、{function-name} 標籤或 [{repo-name}] 標題前綴輔助搜尋，但不能只依 labels 判斷。
 - 已存在相同摘要時，優先更新既有 ticket 或要求人工決定。
 
 ### Commit 沒有出現在 Jira
