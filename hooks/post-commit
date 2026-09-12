@@ -14,7 +14,7 @@ keys=$(printf '%s' "$body" | grep -oE '\b[A-Z][A-Z0-9]+-[0-9]+\b' | awk '!seen[$
 if [ -z "$keys" ]; then
   cat >&2 <<MSG
 
-[Jira] commit $sha「$subject」沒有引用任何票號。
+[Jira] commit ${sha}「${subject}」沒有引用任何票號。
 GitLab 整合因此不會掛上連結，這筆紀錄不會被追蹤。
 若非有意為之，可用 git commit --amend 補上票號。
 
@@ -31,8 +31,8 @@ esac
 
 cat >&2 <<MSG
 
-[Jira] commit $sha「$subject」引用了 $keys
-請用 Atlassian MCP（cloudId $CLOUD_ID）依序處理：
+[Jira] commit ${sha}「${subject}」引用了 ${keys}
+請用 Atlassian MCP（cloudId ${CLOUD_ID}）依序處理：
 
   1. 讀取每張票狀態。若為「待辦事項」或「計畫階段」，
      用 transition id 2 轉為「進行中」。
@@ -44,8 +44,8 @@ cat >&2 <<MSG
   2b. 若某張父任務底下的子任務**全部**都是「完成」，提示使用者
      該父任務是否可以結案。一樣要經使用者同意才用 id 41，
      不可因為子任務都完成就自行結案。
-  3. 僅限新開的票：類別 customfield_10046 依 commit type「$ctype」
-     對應 $cat_id（$cat_name）。既有票不回填。
+  3. 僅限新開的票：類別 customfield_10046 依 commit type「${ctype}」
+     對應 ${cat_id}（${cat_name}）。既有票不回填。
   4. Web 連結由 GitLab 整合自動掛上，不需手動建立，也不要發留言。
 
 MSG
