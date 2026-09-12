@@ -1,6 +1,6 @@
 ---
 name: auto-commit-push
-description: Analyze the git diff, produce a Conventional Commits message, safely stage only relevant files (never .env/credentials, never `git add -A`/`git add .`), commit, and push to the current branch. Use when the user asks to commit, auto-commit, "commit and push", or any request to automate the git commit/push flow, even if they don't say "conventional commits" or "push" explicitly. Built-in guardrails: asks whether to show the staged diff before committing, detects sensitive files, detects main/master, detects a diverged/behind branch — stops and asks the user in those cases instead of acting blindly.
+description: Analyze the git diff, produce a Conventional Commits message, safely stage only relevant files (never .env/credentials, never `git add -A`/`git add .`), commit, push to the current branch, and offer to open a GitLab merge request afterwards. Use when the user asks to commit, auto-commit, "commit and push", or any request to automate the git commit/push flow, even if they don't say "conventional commits" or "push" explicitly. Built-in guardrails: asks whether to show the staged diff before committing, detects sensitive files, detects main/master, detects a diverged/behind branch — stops and asks the user in those cases instead of acting blindly.
 ---
 
 # Auto Commit & Push
@@ -144,7 +144,28 @@ git status
 
 Confirm the working tree is clean and the push succeeded.
 
-### 8. Report
+### 8. Offer to open a merge request
+
+After a successful push, ask the user once:
+
+> 要幫你發 merge request 嗎？（y = 建立，Enter/n = 跳過）
+
+- Default is **not** to create one — "no", silence, or a non-interactive
+  session means skip it and just report the push.
+- Don't ask at all when the push didn't happen (stopped on main/master or on a
+  diverged branch). If the branch already has an open MR, report that MR's URL
+  instead of asking — never open a second one for the same branch.
+- If the user says yes, create it with the GitLab MCP `create_merge_request`
+  (`gitlab.dbodm.com`):
+  - project: resolve it from `git remote get-url origin`, never guess it
+  - source: the current branch; target: the project's default branch
+  - title: the commit subject, keeping the Jira key when there is one
+  - description: what changed and how it was verified, plus the Jira key
+- Report the MR URL. Do not merge, approve, or assign reviewers unless the
+  user asks.
+
+### 9. Report
 
 Keep it brief: short commit hash, first line of the commit message, push
-result. No need to narrate every step taken.
+result, and the MR URL when one was created. No need to narrate every step
+taken.

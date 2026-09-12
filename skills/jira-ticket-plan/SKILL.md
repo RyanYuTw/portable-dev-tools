@@ -65,3 +65,4 @@ description 裡通常已有「背景／既有後端佐證／驗收標準／驗�
 - commit 訊息必須含票號（`KNDU-228` 大寫、有連字號），否則 GitLab 不會回寫 Jira
 - **commit 之前先問一句「要先看 git diff 嗎？」**。預設不顯示：使用者說不用、沒回應或非互動情境就直接 commit；說要看才輸出 `git diff --staged`（改動大時先給 `--stat` 摘要再給全文），等使用者反應後再 commit。每次 commit 只問一次，改動再小也要問。這是複查點不是許可閘門，使用者看完沒有要求修改就照原計畫 commit
 - 推送前會被 review 閘門攔下，那是預期行為。跑完 review 或使用者選擇略過後，把 HEAD 的完整 SHA 寫入 `.claude/state/reviewed` 即放行
+- **push 成功之後再問一句「要發 merge request 嗎？」**。預設不發：使用者說不用、沒回應或非互動情境就只回報推送結果。要發才用 GitLab MCP `create_merge_request`（專案由 `git remote get-url origin` 推得、不要臆測，source 為目前分支、target 為專案預設分支，標題帶票號如 `KNDU-228`，描述寫改動摘要與驗證方式），建立後回報 MR 連結。推送沒成功就不要問；該分支已有開啟中的 MR 就直接回報既有連結，不要重複開。不要自行 merge、approve 或指派審核者
