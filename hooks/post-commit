@@ -24,9 +24,9 @@ fi
 
 ctype=$(printf '%s' "$subject" | sed -E 's/^([a-zA-Z]+).*/\1/' | tr '[:upper:]' '[:lower:]')
 case "$ctype" in
-  feat) cat_id="10053"; cat_name="功能新增 Feature" ;;
-  fix)  cat_id="10054"; cat_name="錯誤 Bug" ;;
-  *)    cat_id="10055"; cat_name="雜項 Chore" ;;
+  feat) cat_id="10053"; cat_name="功能開發 Feature" ;;
+  fix)  cat_id="10054"; cat_name="錯誤修訂 Bug" ;;
+  *)    cat_id="10055"; cat_name="雜項任務 Chore" ;;
 esac
 
 cat >&2 <<MSG
