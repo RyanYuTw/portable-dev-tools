@@ -40,13 +40,11 @@ Data and integrations
 - GitLab MCP: projects, issues, merge requests, pipelines, and APIs on `gitlab.dbodm.com`.
 - Atlassian Rovo MCP: Jira Cloud, Confluence, and Compass.
 - Fetch MCP: retrieves and converts web pages for the model.
-- NotebookLM MCP: source-grounded answers from NotebookLM notebooks.
 
 ## Requirements
 
 - Node.js 18 or newer and `npx` for Playwright and GitLab MCP.
 - `uv`/`uvx` for Fetch MCP.
-- `uv`/`uvx` also covers NotebookLM MCP — it runs as `uvx --from notebooklm-mcp-cli notebooklm-mcp`, so nothing has to be on `PATH`. It does need a one-time interactive sign-in: `uv tool install notebooklm-mcp-cli && nlm login` (or `uvx --from notebooklm-mcp-cli nlm login`). Without it every call fails with `Profile 'default' not found`.
 - Python 3.10 or newer for the skills that ship scripts (`crawl4ai`, `gdrive-crud`, `html-slide-builder`).
 - A GitHub fine-grained personal access token in `GITHUB_PERSONAL_ACCESS_TOKEN`.
 - A GitLab personal access token for `gitlab.dbodm.com` in `GITLAB_PERSONAL_ACCESS_TOKEN` (this instance has no native MCP endpoint, so GitLab MCP runs via `@zereight/mcp-gitlab` with a PAT instead of OAuth).
@@ -134,7 +132,7 @@ This repository is the portable synchronization boundary between Codex and Claud
 
 - Shared Skills live under `skills/` and are loaded by both plugin runtimes.
 - Shared MCP servers live in `.mcp.json` and use environment variables or OAuth, not machine-specific secrets.
-- The current shared MCP set includes Context7, Playwright, GitHub, GitLab, Atlassian, Fetch, and NotebookLM.
+- The current shared MCP set includes Context7, Playwright, GitHub, GitLab, Atlassian, and Fetch.
 - Codex-only runtime services such as `node_repl`, computer-use backends, and absolute application paths stay in Codex local configuration and are not copied into Claude Code.
 
 To use the synchronized bundle in Claude Code:
@@ -143,7 +141,7 @@ To use the synchronized bundle in Claude Code:
 claude --plugin-dir /path/to/portable-dev-tools
 ~~~
 
-After pulling a newer version, start a new Claude Code session so the updated Skills and MCP definitions are reloaded. Set the required environment variables on that computer before using GitHub, GitLab, Google Drive, or NotebookLM.
+After pulling a newer version, start a new Claude Code session so the updated Skills and MCP definitions are reloaded. Set the required environment variables on that computer before using GitHub, GitLab, or Google Drive.
 
 ## Security
 

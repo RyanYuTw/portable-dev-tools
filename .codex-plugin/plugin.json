@@ -1,6 +1,6 @@
 {
   "name": "portable-dev-tools",
-  "version": "0.6.13+codex.20260912112917",
+  "version": "0.6.14+codex.20260912114324",
   "description": "Portable skills and MCP servers for software development across Codex and Claude Code.",
   "author": {
     "name": "Ryan"
@@ -9,7 +9,7 @@
   "interface": {
     "displayName": "Portable Dev Tools",
     "shortDescription": "Shared skills for git, tickets, documents, slides, and data, plus MCP tools.",
-    "longDescription": "A portable Agent Plugins 1.0 bundle with shared skills for Git workflows, Jira, document and slide generation, web crawling, and Google Drive, plus Context7, Playwright, GitHub, GitLab, Atlassian, Fetch, and NotebookLM MCP servers.",
+    "longDescription": "A portable Agent Plugins 1.0 bundle with shared skills for Git workflows, Jira, document and slide generation, web crawling, and Google Drive, plus Context7, Playwright, GitHub, GitLab, Atlassian, and Fetch MCP servers.",
     "developerName": "Ryan",
     "category": "Developer Tools",
     "capabilities": [
