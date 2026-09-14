@@ -32,24 +32,6 @@ Data and integrations
 - `crawl4ai`: web crawling and extraction with Crawl4AI.
 - `gdrive-crud`: Google Drive CRUD through a service account.
 
-Engineering workflow (imported from [obra/superpowers](https://github.com/obra/superpowers), MIT — see `licenses/superpowers-LICENSE.txt`)
-
-- `brainstorming`: structured idea exploration before committing to an approach.
-- `writing-plans`: turns a brainstormed approach into a checkbox-tracked implementation plan.
-- `executing-plans`: executes a written plan task-by-task with review checkpoints (single session).
-- `subagent-driven-development`: executes a written plan by dispatching implementer/reviewer subagents per task.
-- `dispatching-parallel-agents`: fans independent work out to parallel subagents.
-- `using-git-worktrees`: creates and manages isolated git worktrees for a task.
-- `test-driven-development`: RED-GREEN-REFACTOR cycle and guidance on writing meaningful tests.
-- `systematic-debugging`: root-cause-first debugging process for bugs, test failures, and unexpected behavior.
-- `requesting-code-review`: prepares and requests a code review before merging.
-- `receiving-code-review`: process for triaging and acting on code review feedback.
-- `finishing-a-development-branch`: closes out a branch — merge/PR, worktree cleanup, follow-ups.
-- `verification-before-completion`: checklist to verify work actually satisfies the task before reporting done.
-- `writing-skills`: guidance for authoring new Claude Code / Codex skills.
-
-Only the 13 task skills were imported. The upstream `using-superpowers` meta-skill and its `SessionStart` hook (which force a skill-relevance check before every response) were intentionally left out — they are a global behavior change across this whole plugin and conflict with this repo's choice to keep enforcement in git hooks rather than agent-level hooks (see "Git hooks" below). These skills trigger the same way every other skill in this repo does: by relevance of their own `description`.
-
 ### MCP servers
 
 - Context7 MCP: current library documentation.
@@ -64,7 +46,6 @@ Only the 13 task skills were imported. The upstream `using-superpowers` meta-ski
 - Node.js 18 or newer and `npx` for Playwright and GitLab MCP.
 - `uv`/`uvx` for Fetch MCP.
 - Python 3.10 or newer for the skills that ship scripts (`crawl4ai`, `gdrive-crud`, `html-slide-builder`).
-- `graphviz` (`dot`) is optional, only needed by `writing-skills`' diagram renderer.
 - A GitHub fine-grained personal access token in `GITHUB_PERSONAL_ACCESS_TOKEN`.
 - A GitLab personal access token for `gitlab.dbodm.com` in `GITLAB_PERSONAL_ACCESS_TOKEN` (this instance has no native MCP endpoint, so GitLab MCP runs via `@zereight/mcp-gitlab` with a PAT instead of OAuth).
 - `GDRIVE_SA_KEY_PATH` pointing at a Google service account key file for `gdrive-crud`.
