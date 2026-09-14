@@ -58,10 +58,11 @@ Only the 13 task skills were imported. The upstream `using-superpowers` meta-ski
 - GitLab MCP: projects, issues, merge requests, pipelines, and APIs on `gitlab.dbodm.com`.
 - Atlassian Rovo MCP: Jira Cloud, Confluence, and Compass.
 - Fetch MCP: retrieves and converts web pages for the model.
+- codebase-memory MCP: local tree-sitter/LSP knowledge graph of the repo (search, call chains, impact analysis) for large-repo code exploration; 100% local, no API key. Launched via `npx codebase-memory-mcp@latest` with no CLI args, so it starts as a plain stdio MCP server — the vendor's own auto-installer (which rewrites `~/.claude.json`, installs its own hooks/skills/subagents across ~45 clients, and runs a shared background daemon) was intentionally **not** run; see [manual configuration](https://github.com/DeusData/codebase-memory-mcp#manual-mcp-configuration) upstream. First use downloads a large (~40 MB compressed / ~300 MB installed) checksum-verified native binary per machine — expect a slow first launch.
 
 ## Requirements
 
-- Node.js 18 or newer and `npx` for Playwright and GitLab MCP.
+- Node.js 18 or newer and `npx` for Playwright, GitLab, and codebase-memory MCP.
 - `uv`/`uvx` for Fetch MCP.
 - Python 3.10 or newer for the skills that ship scripts (`crawl4ai`, `gdrive-crud`, `html-slide-builder`).
 - `graphviz` (`dot`) is optional, only needed by `writing-skills`' diagram renderer.

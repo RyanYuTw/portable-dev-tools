@@ -38,6 +38,13 @@
       "args": [
         "mcp-server-fetch"
       ]
+    },
+    "codebase-memory": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "codebase-memory-mcp@latest"
+      ]
     }
   }
 }
