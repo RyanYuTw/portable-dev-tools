@@ -3,8 +3,6 @@
 # 本身不呼叫 Jira，只把該做的事印到 stderr，由驅動的 agent 執行。
 set -uo pipefail
 
-CLOUD_ID="705c06fa-40ad-4dde-b2ac-35a2fe5f72b6"
-
 subject=$(git log -1 --pretty=%s 2>/dev/null) || exit 0
 body=$(git log -1 --pretty=%B 2>/dev/null) || exit 0
 sha=$(git rev-parse --short HEAD 2>/dev/null) || exit 0
@@ -22,31 +20,26 @@ MSG
   exit 0
 fi
 
-ctype=$(printf '%s' "$subject" | sed -E 's/^([a-zA-Z]+).*/\1/' | tr '[:upper:]' '[:lower:]')
-case "$ctype" in
-  feat) cat_id="10053"; cat_name="功能開發 Feature" ;;
-  fix)  cat_id="10054"; cat_name="錯誤修訂 Bug" ;;
-  *)    cat_id="10055"; cat_name="雜項任務 Chore" ;;
-esac
-
 cat >&2 <<MSG
 
 [Jira] commit ${sha}「${subject}」引用了 ${keys}
-請用 Atlassian MCP（cloudId ${CLOUD_ID}）依序處理：
+請依各票的 Jira site／project metadata 與 workflow 逐項處理：
 
-  1. 讀取每張票狀態。若為「待辦事項」或「計畫階段」，
-     用 transition id 2 轉為「進行中」。
-  1b. 若該票是子任務，一併檢查父任務：只要任一子任務是「進行中」
-     或「完成」，而父任務仍在「待辦事項」或「計畫階段」，
-     父任務也要用 transition id 2 轉為「進行中」。
+  1. 讀取每張票狀態。若目前是未開始狀態，讀取該 project 的可用
+     transitions，依實際名稱與 ID 轉為「進行中」，不可猜測 ID。
+  1b. 若該票是子任務，一併檢查父任務：只要任一子任務是進行中
+     或完成，而父任務仍是未開始狀態，父任務也要依 metadata 轉為進行中。
+  1c. 若流程要求 Sprint／Backlog，確認該票是否已加入目標 board 與 Sprint，
+     未加入時依使用者指定的 board／Sprint 操作並回讀驗證。
   2. 若本次內容已完成某張票或其子任務，**先詢問使用者**；
-     得到同意才用 transition id 41。未經同意不要轉成完成。
+     得到同意才使用該 project metadata 回傳的完成 transition。未經同意不要轉成完成。
   2b. 若某張父任務底下的子任務**全部**都是「完成」，提示使用者
-     該父任務是否可以結案。一樣要經使用者同意才用 id 41，
+     該父任務是否可以結案。一樣要經使用者同意才使用完成 transition，
      不可因為子任務都完成就自行結案。
-  3. 僅限新開的票：類別 customfield_10046 依 commit type「${ctype}」
-     對應 ${cat_id}（${cat_name}）。既有票不回填。
-  4. Web 連結由 GitLab 整合自動掛上，不需手動建立，也不要發留言。
+  3. 若需回填類別，先讀取該 project 的欄位 metadata 與可用選項，
+     不可沿用其他 project 的 customfield ID 或選項 ID。
+  4. 驗證 commit／MR 是否已出現在每張票的 Web links。未自動掛上時，
+     使用 Jira Remote Link 寫入可用 URL；不要用留言代替。
 
 MSG
 exit 0

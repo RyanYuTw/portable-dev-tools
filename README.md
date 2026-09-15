@@ -13,9 +13,8 @@ Response and workflow
 Git and issue tracking
 
 - `auto-commit-push`: analyzes changes, writes a Conventional Commits message, stages safely, commits, and pushes.
-- `task-to-jira`: analyzes a feature, splits unfinished implementation into verifiable tasks, and synchronizes confirmed work to Jira.
 - `weekly-jira-report`: generates a read-only weekly report with per-ticket execution evidence and child-task completion progress.
-- `jira-breakdown`: splits a requirement into Jira tasks and sub-tasks, fills start/due dates, priority, category and labels, and asks who to assign before writing.
+- `jira-breakdown`: analyzes a feature, splits unfinished implementation into verifiable Jira tasks and sub-tasks, fills dates, priority, category and labels, and asks who to assign before writing.
 - `jira-ticket-plan`: reads a Jira ticket with its parent and siblings, verifies it against the repository, and proposes an execution plan that waits for approval.
 - `weekly-report-mail`: turns the weekly report into a mail, collects the figures only a human can supply, and sends it after explicit confirmation.
 - `ims-frontend-integration`: integrates IMS frontend OTP/JWT authentication, builds, and deployment synchronization.
@@ -117,7 +116,7 @@ Claude Code needs none of this: it reads this directory through a directory mark
 
 For a Jira-tracked GitLab change:
 
-1. Use `task-to-jira` to inspect the repository, split unfinished work into independently verifiable Jira tasks, and preview the exact fields before any Jira write.
+1. Use `jira-breakdown` to inspect the repository, split unfinished work into independently verifiable Jira tasks, and preview the exact fields before any Jira write.
 2. Put the child Jira key in the commit subject, for example `feat(KNDU-124): add case merge authorization`.
 3. Treat a linked commit as execution evidence. Only auto-complete the child after the pushed commit is in a merged MR and CI/acceptance evidence succeeds.
 4. Use `weekly-jira-report` to show one row per Jira ticket, including status, this-period commits/MRs/worklogs, ticket progress, and completion evidence.

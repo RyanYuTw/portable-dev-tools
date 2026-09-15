@@ -1,7 +1,0 @@
-interface:
-  display_name: "Task to Jira"
-  short_description: "拆解功能實作並同步可驗收 Jira 工作"
-  default_prompt: "使用 $task-to-jira 盤點指定功能，拆成可驗收工作，預覽後在我確認時同步 Jira。"
-
-policy:
-  allow_implicit_invocation: true

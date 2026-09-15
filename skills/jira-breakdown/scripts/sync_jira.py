@@ -172,12 +172,15 @@ def main() -> int:
     load_env_file(args.env_file)
     tasks = read_plan(args.plan)
     project_key = args.project or os.environ.get("JIRA_PROJECT_KEY", DEFAULT_PROJECT_KEY)
+    if not project_key:
+        raise RuntimeError("set JIRA_PROJECT_KEY or pass --project")
     issue_type = args.issue_type or os.environ.get("JIRA_ISSUE_TYPE", "Task")
     default_assignee_email = (
         args.assignee or os.environ.get("JIRA_ASSIGNEE_EMAIL", DEFAULT_ASSIGNEE_EMAIL)
     )
+    assignee_label = default_assignee_email or "<per-task-or-unassigned>"
     print(
-        f"project={project_key} issue_type={issue_type} assignee={default_assignee_email} "
+        f"project={project_key} issue_type={issue_type} assignee={assignee_label} "
         f"tasks={len(tasks)} mode={'apply' if args.apply else 'dry-run'}"
     )
     if not args.apply:

@@ -1,6 +1,15 @@
 ---
 name: auto-commit-push
-description: Analyze the git diff, produce a Conventional Commits message, safely stage only relevant files (never .env/credentials, never `git add -A`/`git add .`), commit, push to the current branch, and offer to open a GitLab merge request afterwards. Use when the user asks to commit, auto-commit, "commit and push", or any request to automate the git commit/push flow, even if they don't say "conventional commits" or "push" explicitly. Built-in guardrails: asks whether to show the staged diff before committing, detects sensitive files, detects main/master, detects a diverged/behind branch — stops and asks the user in those cases instead of acting blindly.
+description: >-
+  Analyze the git diff, produce a Conventional Commits message, safely stage
+  only relevant files (never .env/credentials, never `git add -A`/`git add .`),
+  commit, push to the current branch, and offer to open a GitLab merge request
+  afterwards. Use when the user asks to commit, auto-commit, "commit and push",
+  or any request to automate the git commit/push flow, even if they don't say
+  "conventional commits" or "push" explicitly. Built-in guardrails: asks
+  whether to show the staged diff before committing, detects sensitive files,
+  detects main/master, detects a diverged/behind branch — stops and asks the
+  user in those cases instead of acting blindly.
 ---
 
 # Auto Commit & Push
@@ -23,11 +32,11 @@ git log --oneline -10 # match this repo's recent commit style
 
 **Jira/GitLab traceability (only when the current task is Jira-tracked):**
 
-- Use the child Jira key in the commit subject, for example `feat(KNDU-124): add case merge authorization`.
+- Use the child Jira key in the commit subject, for example `feat(PROJ-124): add case merge authorization`.
 - A parent key alone is not enough to identify a Jira subtask.
-- If the task is Jira-tracked but no child key is known, stop before committing and ask for the key or direct the user to `task-to-jira`.
+- If the task is Jira-tracked but no child key is known, stop before committing and ask for the key or direct the user to `jira-breakdown`.
 - A commit creates execution evidence; it does not by itself prove that the Jira child is complete.
-- After the commit is pushed, `task-to-jira` may link the commit and transition the child only after MR merge, CI/acceptance evidence, and the exact Jira transition are verified.
+- After the commit is pushed, `jira-breakdown` may link the commit and transition the child only after MR merge, CI/acceptance evidence, and the exact Jira transition are verified.
 
 ### 2. Choose files to stage
 

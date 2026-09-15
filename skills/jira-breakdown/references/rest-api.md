@@ -6,12 +6,12 @@ Only use this fallback when no Atlassian MCP connector is available.
 
 The helper reads configuration from environment variables without printing secret values:
 
-- `JIRA_BASE_URL`: Jira Cloud site; defaults to `https://dboem.atlassian.net` if unset
+- `JIRA_BASE_URL`: Jira Cloud site; defaults to `https://dboem.atlassian.net`
 - `JIRA_EMAIL`: Atlassian account email (used for API auth, not the assignee)
 - `JIRA_API_TOKEN`: Atlassian API token
-- `JIRA_PROJECT_KEY`: target Jira project key; `--project` overrides it; defaults to `KNDU` if unset
+- `JIRA_PROJECT_KEY`: target Jira project key; `--project` overrides it; defaults to `KNDU`
 - `JIRA_ISSUE_TYPE`: issue type name; defaults to `Task`, and `--issue-type` overrides it
-- `JIRA_ASSIGNEE_EMAIL`: assignee's Atlassian account email; `--assignee` overrides it; defaults to `ryan.yu@dboem.com` if unset
+- `JIRA_ASSIGNEE_EMAIL`: default assignee's Atlassian account email; `--assignee` overrides it; defaults to `ryan.yu@dboem.com`
 
 Never commit tokens, place them in command arguments, or include them in Jira descriptions.
 
@@ -25,7 +25,7 @@ The plan is a JSON array. Each item requires `summary` and `description`; `label
     "summary": "[ims] 帳號停用流程可由後台送出並寫回狀態",
     "description": "背景、證據、驗收條件、測試方式與完成定義",
     "labels": ["ims", "帳號停用", "後端"],
-    "assignee": "ryan.yu@dboem.com"
+    "assignee": "developer@example.com"
   }
 ]
 ```
@@ -44,11 +44,11 @@ taken from `--repo-label` or the current git repository name.
 The helper defaults to dry-run. Use `--apply` only after the user confirms the exact Jira write, including the assignee. It does not delete issues or transition workflow status.
 
 ```bash
-python3 /path/to/task-to-jira/scripts/sync_jira.py \
+python3 /path/to/jira-breakdown/scripts/sync_jira.py \
   --plan /path/to/generated-plan.json \
-  --project KNDU
+  --project PROJ
 ```
 
-`--project`, `--assignee`, `JIRA_BASE_URL`, and `JIRA_PROJECT_KEY` all default to the dboem KNDU board and `ryan.yu@dboem.com`; pass explicit values only to target something else.
+`--project`, `JIRA_BASE_URL`, and `JIRA_PROJECT_KEY` identify the target Jira site and project; the organization default is the KNDU board. Supply `--assignee` or `JIRA_ASSIGNEE_EMAIL` to override the default assignee.
 
 After preview and confirmation, repeat with `--apply` and read the affected issues back from Jira.

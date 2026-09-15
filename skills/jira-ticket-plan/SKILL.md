@@ -1,19 +1,19 @@
 ---
 name: jira-ticket-plan
-description: 依 Jira ticket 編號讀取需求內容，對照儲存庫現況後規劃執行步驟與做法，經使用者確認才開始實作。用於「KNDU-xxx 要怎麼做」「幫我規劃這張票」「開始做 KNDU-xxx」。
+description: 依 Jira ticket 編號讀取需求內容，對照儲存庫現況後規劃執行步驟與做法，經使用者確認才開始實作。用於「PROJ-xxx 要怎麼做」「幫我規劃這張票」「開始做 PROJ-xxx」。
 ---
 
 # 依 Jira ticket 規劃執行
 
-輸入一個或多個 ticket 編號（如 `KNDU-228`），產出可執行的實作計畫，**確認後才動手**。
+輸入一個或多個 ticket 編號（如 `PROJ-228`），產出可執行的實作計畫，**確認後才動手**。
 
 ## 1. 讀取票的完整脈絡
 
-用 Atlassian MCP（cloudId `705c06fa-40ad-4dde-b2ac-35a2fe5f72b6`）取得：
+用 Atlassian MCP 從 ticket URL 或已驗證的 Jira site 取得 cloudId，並讀取：
 
 - 該票的 summary、description、狀態、受託人、標籤、類別、起訖日期
 - 若是子任務，一併讀父任務與**所有兄弟子任務**——相鄰的票常決定介面契約與先後順序
-- `getJiraIssueRemoteIssueLinks`：已掛上的 commit 連結代表這張票已經動過，不要重做
+- `listJiraIssueRemoteIssueLinks`：已掛上的 commit 連結代表這張票已經動過，不要重做
 
 description 裡通常已有「背景／既有後端佐證／驗收標準／驗證方式／Definition of Done」五段，那是規劃的主要依據。
 
@@ -60,9 +60,9 @@ description 裡通常已有「背景／既有後端佐證／驗收標準／驗�
 
 確認後依步驟實作。過程中：
 
-- 狀態轉移交給 commit hook 處理，**不要**在此手動轉票。提交後 hook 會提示把「待辦事項／計畫階段」轉「進行中」（transition id 2），並**一併檢查父任務**——只要任一子任務是「進行中」或「完成」，父任務就不該停在「待辦事項」。hook 由 `scripts/install-git-hooks.sh` 安裝到 `.git/hooks/post-commit`，對 Codex、Claude Code 與純終端機 git 一律生效
+- 狀態轉移交給 commit hook 提示或 Jira skill 處理，**不要猜測 transition ID**。提交後若票仍在未開始狀態，讀取該 Jira project 的 transitions，依實際名稱與 ID 轉為進行中，並**一併檢查父任務**——只要任一子任務是進行中或完成，父任務就不該停在未開始狀態。hook 由 `scripts/install-git-hooks.sh` 安裝到 `.git/hooks/post-commit`，對 Codex、Claude Code 與純終端機 git 一律生效
 - 子任務標記完成一律需要使用者同意，不可自行判定
-- commit 訊息必須含票號（`KNDU-228` 大寫、有連字號），否則 GitLab 不會回寫 Jira
+- commit 訊息必須含完整票號（例如 `PROJ-228`，大寫、有連字號），否則 GitLab 不會回寫 Jira
 - **commit 之前先問一句「要先看 git diff 嗎？」**。預設不顯示：使用者說不用、沒回應或非互動情境就直接 commit；說要看才輸出 `git diff --staged`（改動大時先給 `--stat` 摘要再給全文），等使用者反應後再 commit。每次 commit 只問一次，改動再小也要問。這是複查點不是許可閘門，使用者看完沒有要求修改就照原計畫 commit
 - 推送前會被 review 閘門攔下，那是預期行為。跑完 review 或使用者選擇略過後，把 HEAD 的完整 SHA 寫入 `.claude/state/reviewed` 即放行
 - **push 成功之後再問一句「要發 merge request 嗎？」**。預設不發：使用者說不用、沒回應或非互動情境就只回報推送結果。要發才用 GitLab MCP `create_merge_request`（專案由 `git remote get-url origin` 推得、不要臆測，source 為目前分支、target 為專案預設分支，標題帶票號如 `KNDU-228`，描述寫改動摘要與驗證方式），建立後回報 MR 連結。推送沒成功就不要問；該分支已有開啟中的 MR 就直接回報既有連結，不要重複開。不要自行 merge、approve 或指派審核者

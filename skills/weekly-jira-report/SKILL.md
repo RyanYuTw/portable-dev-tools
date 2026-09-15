@@ -18,11 +18,11 @@ Use this skill for a weekly report, engineering progress report, Jira progress s
 
 ## Required inputs
 
-1. Jira project key, normally KNDU.
+1. Jira project key; default to the organization-wide `KNDU` project when no other project is specified.
 2. Report period in YYYY-MM-DD format.
 3. Verified Jira statuses that mean not started, in progress/review, and completed.
 4. Parent issues and their child tasks, or a JQL query that identifies the scope.
-5. GitLab project path, normally laravel/ims.
+5. GitLab project path, derived from the repository remote or supplied by the user.
 
 If the user does not give a parent issue, use all matching project tasks changed during the period and clearly label the report as project-level.
 
@@ -125,5 +125,4 @@ Do not invent missing values. Use 未設定、無資料、待確認 as appropria
 
 ## Example request
 
-請產生 KNDU 專案 2026-09-01 至 2026-09-07 的週報，時區 Asia/Taipei。以 Jira 子任務完成度計算工作進度，每張 ticket 顯示本週 commit、MR、worklog 與目前進度；只讀取，不修改 Jira 或 GitLab。
-
+請產生 PROJ 專案 2026-09-01 至 2026-09-07 的週報，時區 Asia/Taipei。以 Jira 子任務完成度計算工作進度，每張 ticket 顯示本週 commit、MR、worklog 與目前進度；只讀取，不修改 Jira 或 GitLab。

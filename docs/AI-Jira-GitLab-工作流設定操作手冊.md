@@ -1157,7 +1157,7 @@ reports/weekly/KNDU-YYYY-MM-DD.md
 ]
 ~~~
 
-沒有 Atlassian MCP 時，才使用 task-to-jira skill 提供的 REST fallback；該 helper 預設 dry-run，必須在預覽與明確確認後才加 --apply。Token 應使用環境變數：
+沒有 Atlassian MCP 時，才使用 jira-breakdown skill 所提供的 REST fallback；該 helper 預設 dry-run，必須在預覽與明確確認後才加 --apply。Token 應使用環境變數：
 
 ~~~bash
 export JIRA_BASE_URL='https://dboem.atlassian.net'

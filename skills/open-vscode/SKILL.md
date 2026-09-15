@@ -1,7 +1,6 @@
 ---
 name: open-vscode
 description: Open files or directories in VSCode from Claude Code
-trigger: auto
 ---
 
 # Open in VSCode Skill
